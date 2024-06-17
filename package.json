@@ -1,0 +1,11 @@
+{
+  "name": "tower_defense",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/rladmswlr/towerdefense.git",
+  "author": "rladmswlr <alswndmswlr@naver.com>",
+  "license": "MIT",
+  "dependencies": {
+    "gitignore": "^0.7.0"
+  }
+}
