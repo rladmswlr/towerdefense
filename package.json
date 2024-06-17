@@ -5,7 +5,21 @@
   "repository": "https://github.com/rladmswlr/towerdefense.git",
   "author": "rladmswlr <alswndmswlr@naver.com>",
   "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "dev": "nodemon src/app.js"
+  },
   "dependencies": {
-    "gitignore": "^0.7.0"
+    "express": "^4.19.2",
+    "gitignore": "^0.7.0",
+    "http-server": "^14.1.1",
+    "prisma": "^5.15.0",
+    "prisma-client": "^0.0.0",
+    "socket.io": "^4.7.5",
+    "uuid": "^10.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.3",
+    "prettier": "^3.3.2"
   }
 }
