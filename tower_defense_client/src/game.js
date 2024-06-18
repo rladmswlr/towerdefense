@@ -198,6 +198,10 @@ function gameLoop() {
       );
       if (distance < tower.range) {
         tower.attack(monster);
+        sendEvent(13, {
+          towerId: tower.id,
+          attackPower: tower.attackPower
+        })
       }
     });
   });
@@ -218,6 +222,15 @@ function gameLoop() {
     } else {
       /* 몬스터가 죽었을 때 */
       monsters.splice(i, 1);
+      sendEvent(12, {
+        monster
+      })
+
+      score += 100;
+      if (score % 2000 === 0) {
+        monsterLevel += 1;
+        userGold += 1000;
+      }
     }
   }
 
