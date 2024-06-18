@@ -218,7 +218,6 @@ function gameLoop() {
     } else {
       /* 몬스터가 죽었을 때 */
       monsters.splice(i, 1);
-      score += 100;
     }
   }
 
