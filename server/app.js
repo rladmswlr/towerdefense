@@ -1,7 +1,19 @@
 import express from "express";
 import {createServer} from 'http';
 import initSocket from "./init/socket.js";
-import { loadGameAssets } from "./init/assets.js";
 
 const app = express();
 const server = createServer(app);
+
+const PORT = process.env.PORT_NUMBER;
+
+app.use(express.json());
+initSocket(server);
+
+app.get('/', (req, res) => {
+    res.send('Hello World');
+});
+
+server.listen(PORT, async() => {
+    console.log(`${PORT} Server가 열렸습니다`);
+})
