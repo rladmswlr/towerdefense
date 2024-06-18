@@ -1,0 +1,27 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+
+model User{
+  user_Id   Int     @id @default(autoincrement()) @map("user_Id")
+  id        String  @unique @map("id")
+  password  String  @map("password")
+
+  rank Rank?
+  @@map("User")
+}
+
+model Rank{
+    rank_Id     Int @id @default(autoincrement()) @map("rank_Id")
+    user_Id     Int @unique @map("user_Id")
+    highscore   Int @map("highscore")
+
+    user        User @relation(fields:[user_Id], references : [user_Id], onDelete : Cascade)
+    @@map("Rank")
+}
