@@ -1,7 +1,7 @@
-import { sendEvent } from './game';
+import { sendEvent } from "./game";
 
 export class Tower {
-  constructor(towerId, x, y, cost) {
+  constructor(towerId ,x, y, cost) {
     // 생성자 안에서 타워들의 속성을 정의한다고 생각하시면 됩니다!
     this.towerId = towerId; //타워의 Id값 관리
     this.x = x; // 타워 이미지 x 좌표

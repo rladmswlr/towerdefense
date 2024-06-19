@@ -11,6 +11,5 @@ const handlerMappings = {
   12: removeMonster,
   13: damageMonster,
   14: monsterAttackBase,
-};
 
 export default handlerMappings;
