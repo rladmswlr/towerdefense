@@ -1,6 +1,7 @@
 import { initializeGameHandler, syncGameStateHandler } from './sync.handler.js';
 import { removeMonster, damageMonster, monsterAttackBase } from './monster.handler.js';
 import { attackTower, buyTower, initTower } from './tower.handler.js';
+import { checkForBreak } from './base.handler.js';
 
 const handlerMappings = {
   1: initializeGameHandler,
@@ -11,5 +12,7 @@ const handlerMappings = {
   12: removeMonster,
   13: damageMonster,
   14: monsterAttackBase,
-}
+  15: checkForBreak,
+};
+
 export default handlerMappings;

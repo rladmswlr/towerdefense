@@ -20,7 +20,7 @@ let baseHp = 0; // 기지 체력
 
 let towerCost = 500; // 타워 구입 비용
 let monsterLevel = 0; // 몬스터 레벨
- let monsterSpawnInterval = 1800; // 몬스터 생성 주기
+let monsterSpawnInterval = 1800; // 몬스터 생성 주기
 let numOfInitialTowers = 0;
 const monsters = [];
 const towers = [];
@@ -28,6 +28,7 @@ const towers = [];
 let score = 0; // 게임 점수
 let highScore = 0; // 기존 최고 점수
 let isInitGame = false;
+let isDeath = false;
 
 let towerId = 0;
 
@@ -285,12 +286,12 @@ Promise.all([
   const token = localStorage.getItem('accessToken');
   serverSocket = io('http://localhost:8080', {
     query: {
-      token: token, 
-      clientVersion : CLIENT_VERSION,
+      token: token,
+      clientVersion: CLIENT_VERSION,
     },
 
     auth: {
-      token: token, 
+      token: token,
     },
   });
 
@@ -383,6 +384,7 @@ const updateGameState = (syncData) => {
   baseHp = syncData.baseHp !== undefined ? syncData.baseHp : baseHp;
   score = syncData.score !== undefined ? syncData.score : score;
   highScore = syncData.highScore !== undefined ? syncData.highScore : highScore;
+  isDeath = syncData.isDeath !== undefined ? syncData.isDeath : isDeath;
 };
 
 export { sendEvent };
