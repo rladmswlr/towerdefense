@@ -19,7 +19,6 @@ let base; // 기지 객체
 let baseHp = 0; // 기지 체력
 
 let towerCost = 500; // 타워 구입 비용
-let numOfInitialTowers = 3; // 초기 타워 개수
 let monsterLevel = 0; // 몬스터 레벨
 let monsterSpawnInterval = 0; // 몬스터 생성 주기
 const monsters = [];
@@ -30,7 +29,7 @@ let highScore = 0; // 기존 최고 점수
 let isInitGame = false;
 
 let towerId = 0;
-let sendEvent;
+// let sendEvent;
 // 이미지 로딩 파트
 const backgroundImage = new Image();
 backgroundImage.src = 'images/bg.webp';
@@ -144,10 +143,9 @@ function getRandomPositionNearPath(maxDistance) {
 }
 
 function placeInitialTowers() {
-  /* 
-    타워를 초기에 배치하는 함수입니다.
-    무언가 빠진 코드가 있는 것 같지 않나요? 
-  */
+  
+  
+
   for (let i = 0; i < numOfInitialTowers; i++) {
     const { x, y } = getRandomPositionNearPath(200);
     const tower = new Tower(towerId, x, y, towerCost);
@@ -293,12 +291,12 @@ Promise.all([
   serverSocket = io('http://localhost:8080', {
     query: {
       token: somewhere, // 토큰이 저장된 어딘가에서 가져와야 합니다!
-    clientVersion : CLIENT_VERSION,
+      clientVersion : CLIENT_VERSION,
     },
 
-    // auth: {
-    //   token: somewhere, // 토큰이 저장된 어딘가에서 가져와야 합니다!
-    // },
+    auth: {
+      token: somewhere, // 토큰이 저장된 어딘가에서 가져와야 합니다!
+    },
   });
 
   /* 

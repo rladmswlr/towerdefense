@@ -1,5 +1,5 @@
-import { initializeGameHandler, syncGameStateHandler } from './sync.handler';
-import { removeMonster, damageMonster, monsterAttackBase } from './monster.handler';
+import { initializeGameHandler, syncGameStateHandler } from './sync.handler.js';
+import { removeMonster, damageMonster, monsterAttackBase } from './monster.handler.js';
 import { attackTower, buyTower, initTower } from './tower.handler.js';
 
 const handlerMappings = {
@@ -11,5 +11,5 @@ const handlerMappings = {
   12: removeMonster,
   13: damageMonster,
   14: monsterAttackBase,
-
+}
 export default handlerMappings;

@@ -5,26 +5,26 @@ import jwt from 'jsonwebtoken'
 
 const IDRULES = /^[a-z|A-Z|0-9]+$/;
 const router = express.Router();
+const saltRounds = await bcrypt.genSalt(10);
 
 router.post('/sign-up', async(req,res,next)=>{
-    const {id, password, paswrodconfirm } = req.body;
+    const {id, password } = req.body;
     const isExistUser = await prisma.user.findFirst({
         where:{
             id,
         },
     });
+
     if(isExistUser){
         return res.status(409).json({message:'이미 존재하는 아이디 입니다'});
     }else if(!IDRULES.test(id)){
         return res.status(400).json({message:'아이디는 영어 소문자와 숫자 조합으로 구성되어야 합니다'});
     }else if(password.length<6){
         return res.status(400).json({message:`비밀번호는 최소 6자 이상이여야 합니다`});
-    }else if(password !== paswrodconfirm){
-        return res.status(400).json({message:'비밀번호는 비밀번호 확인과 일치해야 합니다'});
     }
     const hashedPassword = await bcrypt.hash(password,saltRounds);
     // Create new user
-    await prisma.users.create({
+    await prisma.user.create({
         data:{id,password:hashedPassword},
     });
 
@@ -33,7 +33,7 @@ router.post('/sign-up', async(req,res,next)=>{
 
 router.post('/sign-in', async(req, res, next)=>{
     const { id, password } = req.body;
-    const user = await prisma.users.findFirst({where : {id}});
+    const user = await prisma.user.findFirst({where : {id}});
     if(!user){
         return res.status(401).json({message: '존재하지 않는 아이디입니다'});
     }
