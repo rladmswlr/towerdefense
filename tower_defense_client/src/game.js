@@ -307,7 +307,8 @@ Promise.all([
   const handlerMappings = {
     // 서버에서부터 받은 이벤트 코드
     1: (data) => {
-      if (data.status === 'success') {
+      console.log(data);
+      if (data.status === 'event') {
         initializeGameState(data.data);
       } else {
         console.error(`초기화에 실패하였습니다. ${data.message}`);
@@ -334,13 +335,13 @@ Promise.all([
   });
 
   serverSocket.on('connection', (data) => {
-    const user = window.localStorage.getItem('client');
+    const user = window.localStorage.getItem('accessToken');
     if (user) {
       console.log(`클라이언트 정보가 확인됐습니다. ${user}`);
       userId = user;
     } else {
       userId = data.uuid;
-      window.localStorage.setItem('client', userId);
+      window.localStorage.setItem('accessToken', userId);
       console.log(`클라이언트 정보가 확인되지 않았습니다. ${userId}`);
     }
 
