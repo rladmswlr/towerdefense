@@ -43,6 +43,11 @@ export class Monster {
       return false;
     } else {
       const isDestroyed = base.takeDamage(this.attackPower); // 기지에 도달하면 기지에 데미지를 입힙니다!
+      sendEvent(14, {
+        monsterId: this.monsterNumber, // 몬스터 ID
+        level: this.level,            // 몬스터 레벨
+        attackPower: this.attackPower // 몬스터 공격력
+    });
       this.hp = 0; // 몬스터는 이제 기지를 공격했으므로 자연스럽게 소멸해야 합니다.
       return isDestroyed;
     }
