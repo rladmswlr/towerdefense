@@ -1,9 +1,8 @@
-import { getGameAssets } from "../init/assets.js"
-import { clearMonster } from '../models/monster.model.js'
-import { clearTower } from '../models/tower.model.js'
-import { clearLevel, setLevel } from '../models/level.model.js'
-import { CLIENT_VERSION } from '../constants.js'
-
+import { getGameAssets } from '../init/assets.js';
+import { clearMonster } from '../models/monster.model.js';
+import { clearTower } from '../models/tower.model.js';
+import { clearLevel, setLevel } from '../models/level.model.js';
+import { CLIENT_VERSION } from '../constants.js';
 
 export const gameStart = (uuid, payload) => {
   const { init } = getGameAssets();
@@ -26,29 +25,6 @@ export const gameEnd = (uuid, payload) => {
   const user = getUserById(uuid);
   const serverScore = 0;
   //= 몬스터 처리 점수 합산
-
-export const gameStart = (uuid, socket, payload) =>{
-    const { init } = getGameAssets();
-    // clear level
-    clearLevel(uuid);
-    clearTower(uuid);
-    clearMonster(uuid);
-    socket.emit('event', {
-        userId : uuid,
-        clientVersion: CLIENT_VERSION,
-        handlerId : 1,
-        payload : init,
-      });
-}
-
-export const gameEnd = (uuid, payload) =>{
-    
-    const { score } = payload;
-    const { game, monster } = getGameAssets();
-    
-    const user=getUserById(uuid);
-    const serverScore = 0;
-    //= 몬스터 처리 점수 합산
 
   let verification = false;
 

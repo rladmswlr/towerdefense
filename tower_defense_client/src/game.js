@@ -253,11 +253,8 @@ function initGame() {
 
   monsterPath = generateRandomMonsterPath(); // 몬스터 경로 생성
   initMap(); // 맵 초기화 (배경, 몬스터 경로 그리기)
-  console.log('초기화확인');
   placeInitialTowers(); // 설정된 초기 타워 개수만큼 사전에 타워 배치
-  console.log('초기화확인2');
   placeBase(); // 기지 배치
-
   setInterval(spawnMonster, monsterSpawnInterval); // 설정된 몬스터 생성 주기마다 몬스0터 생성
   gameLoop(); // 게임 루프 최초 실행
   isInitGame = true;
@@ -307,7 +304,6 @@ Promise.all([
   const handlerMappings = {
     // 서버에서부터 받은 이벤트 코드
     1: (data) => {
-      console.log(data);
       if (data.status === 'event') {
         initializeGameState(data.data);
       } else {
@@ -346,7 +342,7 @@ Promise.all([
     }
 
     // 초기 게임 데이터 요청
-    sendEvent(1, {});
+    sendEvent(1, { token });
 
     if (!isInitGame) {
       initGame();

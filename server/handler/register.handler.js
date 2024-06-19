@@ -1,5 +1,5 @@
 import { addUser } from '../models/user.model.js';
-import { gameStart } from './game.handler.js'
+import { gameStart } from './game.handler.js';
 import { v4 as uuidv4 } from 'uuid';
 import { handleConnection, handleDisconnect, handlerEvent } from './helper.js';
 
