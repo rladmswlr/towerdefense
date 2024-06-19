@@ -1,5 +1,5 @@
 import { Server as SocketID } from 'socket.io';
-import registerHandler from '../handlers/register.handler.js';
+import registerHandler from '../handler/register.handler.js';
 
 const initSocket = (server) => {
   const io = new SocketID();

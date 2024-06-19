@@ -1,6 +1,9 @@
+import { sendEvent } from './game';
+
 export class Tower {
-  constructor(x, y, cost) {
+  constructor(towerId, x, y, cost) {
     // 생성자 안에서 타워들의 속성을 정의한다고 생각하시면 됩니다!
+    this.towerId = towerId; //타워의 Id값 관리
     this.x = x; // 타워 이미지 x 좌표
     this.y = y; // 타워 이미지 y 좌표
     this.width = 78; // 타워 이미지 가로 길이 (이미지 파일 길이에 따라 변경 필요하며 세로 길이와 비율을 맞춰주셔야 합니다!)
@@ -30,6 +33,7 @@ export class Tower {
   attack(monster) {
     // 타워가 타워 사정거리 내에 있는 몬스터를 공격하는 메소드이며 사정거리에 닿는지 여부는 game.js에서 확인합니다.
     if (this.cooldown <= 0) {
+      sendEvent();
       monster.hp -= this.attackPower;
       this.cooldown = 180; // 3초 쿨타임 (초당 60프레임)
       this.beamDuration = 30; // 광선 지속 시간 (0.5초)
