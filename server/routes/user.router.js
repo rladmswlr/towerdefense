@@ -48,7 +48,7 @@ router.post('/sign-in', async(req, res, next)=>{
 
     res.setHeader('Authorization',`Bearer ${token}`)
 
-    return res.status(200).json({message:'로그인 성공'});
+    return res.status(200).json({message:'로그인 성공', data:`Bearer ${token}`});
 })
 
 export default router;
