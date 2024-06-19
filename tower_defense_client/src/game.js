@@ -20,7 +20,8 @@ let baseHp = 0; // 기지 체력
 
 let towerCost = 500; // 타워 구입 비용
 let monsterLevel = 0; // 몬스터 레벨
-let monsterSpawnInterval = 0; // 몬스터 생성 주기
+ let monsterSpawnInterval = 1800; // 몬스터 생성 주기
+let numOfInitialTowers = 0;
 const monsters = [];
 const towers = [];
 
@@ -29,7 +30,7 @@ let highScore = 0; // 기존 최고 점수
 let isInitGame = false;
 
 let towerId = 0;
-// let sendEvent;
+
 // 이미지 로딩 파트
 const backgroundImage = new Image();
 backgroundImage.src = 'images/bg.webp';
@@ -282,11 +283,14 @@ Promise.all([
 ]).then(() => {
   /* 서버 접속 코드 (여기도 완성해주세요!) */
   const token = localStorage.getItem('accessToken');
-
   serverSocket = io('http://localhost:8080', {
     query: {
-      token: token, // 토큰이 저장된 어딘가에서 가져와야 합니다!
-      clientVersion: CLIENT_VERSION,
+      token: token, 
+      clientVersion : CLIENT_VERSION,
+    },
+
+    auth: {
+      token: token, 
     },
   });
 
