@@ -1,6 +1,7 @@
 import { CLIENT_VERSION } from "../constants.js";
 import { removeUser } from "../models/user.model.js"
 import handlerMappings from "./handlerMapping.js";
+import jwt from 'jsonwebtoken';
 
 
 export const handleDisconnect = (socket, uuid) => {
@@ -10,6 +11,7 @@ export const handleDisconnect = (socket, uuid) => {
 export const handleConnection = (socket, uuid) => {
     
     socket.emit('connection', {uuid})
+    const decodedToken = jwt.verify(token, process.env.CUSTOM_SECRET_KEY);
 }
 
 export const handlerEvent = (io, socket, data) => {
