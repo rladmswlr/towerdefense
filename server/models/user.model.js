@@ -1,8 +1,8 @@
 const users = [];
 
-export const addUser = (token, init ,socket) => {
+export const addUser = (token, init, socket) => {
   const newUser = {
-    token : token,
+    token: token,
     userGold: init.userGold,
     baseHp: init.baseHp,
     towerCost: init.towercost,
@@ -11,7 +11,7 @@ export const addUser = (token, init ,socket) => {
     monsterSpawnInterval: init.monsterSpawnInterval,
     score: init.score,
     highScore: 0,
-    socketId : socket
+    socketId: socket,
   };
   users.push(newUser);
 };

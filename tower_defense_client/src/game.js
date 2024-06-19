@@ -303,9 +303,8 @@ Promise.all([
   const handlerMappings = {
     // 서버에서부터 받은 이벤트 코드
     1: (data) => {
-      console.log(data);
-      if (data.status === 'event') {
-        initializeGameState(data.data);
+      if (data.status === 'success') {
+        initializeGameState(data.data.data.data);
       } else {
         console.error(`초기화에 실패하였습니다. ${data.message}`);
       }
@@ -344,12 +343,18 @@ Promise.all([
     }
 
     // 초기 게임 데이터 요청
-    sendEvent(1, {});
+    sendEvent(1, { payload: userId });
 
-    if (!isInitGame) {
-      initGame();
-    }
+    sleep(100).then(() => {
+      if (!isInitGame) {
+        initGame();
+      }
+    });
   });
+
+  function sleep(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
 
   serverSocket.on('updateGameState', (syncData) => {
     updateGameState(syncData);
