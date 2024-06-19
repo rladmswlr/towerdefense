@@ -3,6 +3,8 @@ let score = 0;
 let scoreChecker = 0;
 let level = 1;
 
+let highScore = 0;
+
 export const setScore = (data) => {
   score = data;   // data.score?
 }
