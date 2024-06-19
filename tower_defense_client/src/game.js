@@ -306,8 +306,7 @@ Promise.all([
     // 서버에서부터 받은 이벤트 코드
     1: (data) => {
       if (data.status === 'success') {
-        console.log(data.data);
-        initializeGameState(data.data);
+        initializeGameState(data.data.data.data);
       } else {
         console.error(`초기화에 실패하였습니다. ${data.message}`);
       }
@@ -334,7 +333,7 @@ Promise.all([
     }
   });
 
-  serverSocket.on('connection', (data) => {
+  serverSocket.on('connection', async (data) => {
     const token = window.localStorage.getItem('accessToken');
     if (token) {
       console.log(`클라이언트 정보가 확인됐습니다. ${token}`);
@@ -344,14 +343,19 @@ Promise.all([
       window.localStorage.setItem('accessToken', userId);
       console.log(`클라이언트 정보가 확인되지 않았습니다. ${userId}`);
     }
-
     // 초기 게임 데이터 요청
     sendEvent(1, {payload:userId});
 
-    if (!isInitGame) {
-      initGame();
-    }
+    sleep(100).then(()=>{
+      if (!isInitGame) {
+        initGame();
+      } 
+    })
   });
+
+  function sleep(ms){
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
 
   serverSocket.on('updateGameState', (syncData) => {
     updateGameState(syncData);
@@ -379,6 +383,8 @@ const sendEvent = (handlerId, payload) => {
     payload,
   });
 };
+
+
 
 const updateGameState = (syncData) => {
   userGold = syncData.userGold !== undefined ? syncData.userGold : userGold;

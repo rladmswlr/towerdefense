@@ -13,7 +13,7 @@ export const addUser = (token, init ,socket) => {
     highScore: 0,
     socketId : socket
   };
-  users.push(newUser);
+  users[token] = newUser;
 };
 
 export const removeUser = (socketId) => {
