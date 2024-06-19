@@ -12,32 +12,34 @@ const basePath = path.join(__dirname, '../../assets');
 // 파일 읽는 함수
 // 비동기 병렬로 파일을 읽는다.
 const readFileAsync = (filename) => {
-    return new Promise( (resolve, reject) => {
-        fs.readFile(path.join(basePath, filename), 'utf8', (err, data) => {
-            if(err){
-                    reject(err);
-                    return;
-                }
-            resolve(JSON.parse(data));
-        })
-    })
-}
+  return new Promise((resolve, reject) => {
+    fs.readFile(path.join(basePath, filename), 'utf8', (err, data) => {
+      if (err) {
+        reject(err);
+        return;
+      }
+      resolve(JSON.parse(data));
+    });
+  });
+};
 
-export const loadGameAssets = async() => {
-    try{
-        // 사용할 asset 작성
-        const [/* 이름 작성 */] = await Promise.all([
-            // 예시
-            //readFileAsync('stage.json'),
-        ]);
+export const loadGameAssets = async () => {
+  try {
+    // 사용할 asset 작성
+    const [
+      /* 이름 작성 */
+    ] = await Promise.all([
+      // 예시
+      //readFileAsync('stage.json'),
+    ]);
 
-        gameAssets = { stages, items, itemUnlocks};
-        return gameAssets;
-    }catch(e){
-    throw new Error('Failed to load game assets: '+ e.message);
-    }
-}
+    gameAssets = { stages, items, itemUnlocks };
+    return gameAssets;
+  } catch (e) {
+    throw new Error('Failed to load game assets: ' + e.message);
+  }
+};
 
 export const getGameAssets = () => {
-    return gameAssets;
-}
+  return gameAssets;
+};
