@@ -1,19 +1,26 @@
-import { CLIENT_VERSION } from "../constants.js";
-import { removeUser } from "../models/user.model.js"
-import handlerMappings from "./handlerMapping.js";
+import { CLIENT_VERSION } from '../constants.js';
+import { removeUser } from '../models/user.model.js';
+import handlerMappings from './handlerMapping.js';
 import { getHighScore } from '../models/score.model.js';
 import jwt from 'jsonwebtoken';
-
 
 export const handleDisconnect = (socket, uuid) => {
   removeUser(socket.id);
 };
 
 export const handleConnection = async (socket, uuid) => {
-    const highScore = await getHighScore(uuid);  
-    socket.emit('connection', { uuid, highScore });
+  // 토큰 추출: WebSocket 쿼리 파라미터에서 토큰을 가져옵니다.
+  const token = socket.handshake.query.token;
+
+  try {
     const decodedToken = jwt.verify(token, process.env.CUSTOM_SECRET_KEY);
-}
+    const highScore = await getHighScore(uuid);
+    socket.emit('connection', { uuid, highScore });
+  } catch (error) {
+    socket.emit('connection', { status: 'fail', message: 'Invalid or expired token' });
+    socket.disconnect(); // 토큰 검증 실패 시 연결 종료
+  }
+};
 
 export const handlerEvent = (socket, data, io) => {
   if (!CLIENT_VERSION.includes(data.clientVersion)) {
