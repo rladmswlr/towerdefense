@@ -6,6 +6,7 @@ import { CLIENT_VERSION } from './Constants.js';
 /* 
   어딘가에 엑세스 토큰이 저장이 안되어 있다면 로그인을 유도하는 코드를 여기에 추가해주세요!
 */
+let userId;
 
 let serverSocket; // 서버 웹소켓 객체
 const canvas = document.getElementById('gameCanvas');
@@ -217,8 +218,8 @@ function gameLoop() {
         tower.attack(monster);
         sendEvent(13, {
           towerId: tower.id,
-          attackPower: tower.attackPower
-        })
+          attackPower: tower.attackPower,
+        });
       }
     });
   });
@@ -240,8 +241,8 @@ function gameLoop() {
       /* 몬스터가 죽었을 때 */
       monsters.splice(i, 1);
       sendEvent(12, {
-        monster
-      })
+        monster,
+      });
 
       score += 100;
       userGold += 1000;
@@ -268,6 +269,17 @@ function initGame() {
   isInitGame = true;
 }
 
+const initializeGameState = (initialGameData) => {
+  userGold = initialGameData.userGold;
+  baseHp = initialGameData.baseHp;
+  towerCost = initialGameData.towerCost;
+  numOfInitialTowers = initialGameData.numOfInitialTowers;
+  monsterLevel = initialGameData.monsterLevel;
+  monsterSpawnInterval = initialGameData.monsterSpawnInterval;
+  score = initialGameData.score;
+  highScore = initialGameData.highScore;
+};
+
 // 이미지 로딩 완료 후 서버와 연결하고 게임 초기화
 Promise.all([
   new Promise((resolve) => (backgroundImage.onload = resolve)),
@@ -279,8 +291,9 @@ Promise.all([
   /* 서버 접속 코드 (여기도 완성해주세요!) */
   let somewhere;
   serverSocket = io('http://localhost:8080', {
-    query:{
-      clientVersion : CLIENT_VERSION,
+    query: {
+      token: somewhere, // 토큰이 저장된 어딘가에서 가져와야 합니다!
+    clientVersion : CLIENT_VERSION,
     },
 
     // auth: {
@@ -297,10 +310,35 @@ Promise.all([
     }
   */
 
-  serverSocket.on('response', (data) => {
-    handleResponse(data);
-  });
+  const handlerMappings = {
+    // 서버에서부터 받은 이벤트 코드
+    1: (data) => {
+      if (data.status === 'success') {
+        initializeGameState(data.data);
+      } else {
+        console.error(`초기화에 실패하였습니다. ${data.message}`);
+      }
+    },
+    2: (data) => {
+      if (data.status === 'success') {
+        updateGameState(data.data);
+      } else {
+        console.error(`동기화에 실패하였습니다. ${data.message}`);
+      }
+    },
+    // 계속 추가
+  };
 
+  serverSocket.on('response', (data) => {
+    // helper.js의 socket.emit('response', response);
+    const handler = handlerMappings[data.handlerId];
+    if (handler) {
+      handler(data);
+    } else {
+      console.error(`핸들러 ID를 찾을 수 없습니다. ${data.handlerId}`);
+    }
+  });
+  
   serverSocket.on('connection', (data) => {
     const user = window.localStorage.getItem('client');
     if (user) {
@@ -311,23 +349,19 @@ Promise.all([
       window.localStorage.setItem('client', userId);
       console.log(`클라이언트 정보가 확인되지 않았습니다. ${userId}`);
     }
-
-    sendEvent = (handlerId, payload) => {
-      serverSocket.emit('event', {
-        userId,
-        clientVersion: CLIENT_VERSION,
-        handlerId,
-        payload,
-      });
-    };
-
+    
+    // 초기 게임 데이터 요청
+    sendEvent(1, {});
+    
     if (!isInitGame) {
       initGame();
     }
   });
-});
 
-export { sendEvent };
+  serverSocket.on('updateGameState', (syncData) => {
+    updateGameState(syncData);
+  });
+});
 
 const buyTowerButton = document.createElement('button');
 buyTowerButton.textContent = '타워 구입';
@@ -341,3 +375,21 @@ buyTowerButton.style.cursor = 'pointer';
 buyTowerButton.addEventListener('click', placeNewTower);
 
 document.body.appendChild(buyTowerButton);
+
+const sendEvent = (handlerId, payload) => {
+  serverSocket.emit('event', {
+    userId,
+    clientVersion: CLIENT_VERSION,
+    handlerId,
+    payload,
+  });
+};
+
+const updateGameState = (syncData) => {
+  userGold = syncData.userGold !== undefined ? syncData.userGold : userGold;
+  baseHp = syncData.baseHp !== undefined ? syncData.baseHp : baseHp;
+  score = syncData.score !== undefined ? syncData.score : score;
+  highScore = syncData.highScore !== undefined ? syncData.highScore : highScore;
+};
+
+export { sendEvent };

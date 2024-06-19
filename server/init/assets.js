@@ -12,16 +12,16 @@ const basePath = path.join(__dirname, '../../assets');
 // 파일 읽는 함수
 // 비동기 병렬로 파일을 읽는다.
 const readFileAsync = (filename) => {
-    return new Promise( (resolve, reject) => {
-        fs.readFile(path.join(basePath, filename), 'utf8', (err, data) => {
-            if(err){
-                    reject(err);
-                    return;
-                }
-            resolve(JSON.parse(data));
-        })
-    })
-}
+  return new Promise((resolve, reject) => {
+    fs.readFile(path.join(basePath, filename), 'utf8', (err, data) => {
+      if (err) {
+        reject(err);
+        return;
+      }
+      resolve(JSON.parse(data));
+    });
+  });
+};
 
 export const loadGameAssets = async() => {
     try{
@@ -41,5 +41,5 @@ export const loadGameAssets = async() => {
 }
 
 export const getGameAssets = () => {
-    return gameAssets;
-}
+  return gameAssets;
+};
