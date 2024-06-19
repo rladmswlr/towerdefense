@@ -143,9 +143,6 @@ function getRandomPositionNearPath(maxDistance) {
 }
 
 function placeInitialTowers() {
-  
-  
-
   for (let i = 0; i < numOfInitialTowers; i++) {
     const { x, y } = getRandomPositionNearPath(200);
     const tower = new Tower(towerId, x, y, towerCost);
@@ -241,11 +238,6 @@ function gameLoop() {
       sendEvent(12, {
         monster,
       });
-
-      score += 100;
-      userGold += 1000;
-
-      
     }
   }
 
@@ -259,10 +251,12 @@ function initGame() {
 
   monsterPath = generateRandomMonsterPath(); // 몬스터 경로 생성
   initMap(); // 맵 초기화 (배경, 몬스터 경로 그리기)
+  console.log('초기화확인');
   placeInitialTowers(); // 설정된 초기 타워 개수만큼 사전에 타워 배치
+  console.log('초기화확인2');
   placeBase(); // 기지 배치
 
-  setInterval(spawnMonster, monsterSpawnInterval); // 설정된 몬스터 생성 주기마다 몬스터 생성
+  setInterval(spawnMonster, monsterSpawnInterval); // 설정된 몬스터 생성 주기마다 몬스0터 생성
   gameLoop(); // 게임 루프 최초 실행
   isInitGame = true;
 }
@@ -287,7 +281,7 @@ Promise.all([
   ...monsterImages.map((img) => new Promise((resolve) => (img.onload = resolve))),
 ]).then(() => {
   /* 서버 접속 코드 (여기도 완성해주세요!) */
-  let token = localStorage.getItem('accessToken');
+  const token = localStorage.getItem('accessToken');
   serverSocket = io('http://localhost:8080', {
     query: {
       token: token, 
@@ -336,7 +330,7 @@ Promise.all([
       console.error(`핸들러 ID를 찾을 수 없습니다. ${data.handlerId}`);
     }
   });
-  
+
   serverSocket.on('connection', (data) => {
     const user = window.localStorage.getItem('client');
     if (user) {
@@ -347,10 +341,10 @@ Promise.all([
       window.localStorage.setItem('client', userId);
       console.log(`클라이언트 정보가 확인되지 않았습니다. ${userId}`);
     }
-    
+
     // 초기 게임 데이터 요청
     sendEvent(1, {});
-    
+
     if (!isInitGame) {
       initGame();
     }
