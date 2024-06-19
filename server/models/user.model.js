@@ -1,16 +1,17 @@
 const users = [];
 
-export const addUser = (user) => {
+export const addUser = (token, init ,socket) => {
   const newUser = {
-    ...user,
-    userGold: 1000,
-    baseHp: 100,
-    towerCost: 200,
-    numOfInitialTowers: 3,
-    monsterLevel: 1,
-    monsterSpawnInterval: 5000,
-    score: 0,
+    token : token,
+    userGold: init.userGold,
+    baseHp: init.baseHp,
+    towerCost: init.towercost,
+    numOfInitialTowers: init.numOfInitialTowers,
+    monsterLevel: init.monsterLevel,
+    monsterSpawnInterval: init.monsterSpawnInterval,
+    score: init.score,
     highScore: 0,
+    socketId : socket
   };
   users.push(newUser);
 };
@@ -26,6 +27,6 @@ export const getUser = () => {
   return users;
 };
 
-export const getUserById = (userId) => {
-  return users.find((user) => user.uuid === userId);
+export const getUserById = (token) => {
+  return users[token];
 };

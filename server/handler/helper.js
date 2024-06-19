@@ -10,10 +10,10 @@ export const handleDisconnect = (socket, uuid) => {
 
 export const handleConnection = async (socket, uuid) => {
   // 토큰 추출: WebSocket 쿼리 파라미터에서 토큰을 가져옵니다.
-  const token = socket.handshake.query.token;
-
+  const token = socket.handshake.query.token.split(' ');
+  
   try {
-    const decodedToken = jwt.verify(token, process.env.CUSTOM_SECRET_KEY);
+    const decodedToken = jwt.verify(token[1], process.env.CUSTOM_SECRET_KEY);
     const highScore = await getHighScore(uuid);
     socket.emit('connection', { uuid, highScore });
   } catch (error) {
@@ -34,7 +34,7 @@ export const handlerEvent = (socket, data, io) => {
     return;
   }
 
-  const response = handler(data.userId, data.payload, io);
+  const response = handler(data.userId, socket ,data.payload, io);
 
   // 모든 유저에게 보내는 정보
   if (response.broadcast) {

@@ -1,21 +1,12 @@
-import { getGameAssets } from '../init/assets.js';
 import { clearMonster } from '../models/monster.model.js';
 import { clearTower } from '../models/tower.model.js';
 import { clearLevel, setLevel } from '../models/level.model.js';
-import { CLIENT_VERSION } from '../constants.js';
 
-export const gameStart = (uuid, payload) => {
-  const { init } = getGameAssets();
+export const gameStart = (uuid, init) => {
   // clear level
   clearLevel(uuid);
   clearTower(uuid);
   clearMonster(uuid);
-  serverSocket.emit('event', {
-    userId: uuid,
-    clientVersion: CLIENT_VERSION,
-    handlerId: 1,
-    payload: init,
-  });
 };
 
 export const gameEnd = (uuid, payload) => {

@@ -286,7 +286,6 @@ Promise.all([
       token: token,
       clientVersion: CLIENT_VERSION,
     },
-
     auth: {
       token: token,
     },
@@ -304,6 +303,7 @@ Promise.all([
   const handlerMappings = {
     // 서버에서부터 받은 이벤트 코드
     1: (data) => {
+      console.log(data);
       if (data.status === 'event') {
         initializeGameState(data.data);
       } else {
@@ -322,19 +322,21 @@ Promise.all([
 
   serverSocket.on('response', (data) => {
     // helper.js의 socket.emit('response', response);
+
     const handler = handlerMappings[data.handlerId];
     if (handler) {
       handler(data);
     } else {
+      console.log(data);
       console.error(`핸들러 ID를 찾을 수 없습니다. ${data.handlerId}`);
     }
   });
 
   serverSocket.on('connection', (data) => {
-    const user = window.localStorage.getItem('accessToken');
-    if (user) {
-      console.log(`클라이언트 정보가 확인됐습니다. ${user}`);
-      userId = user;
+    const token = window.localStorage.getItem('accessToken');
+    if (token) {
+      console.log(`클라이언트 정보가 확인됐습니다. ${token}`);
+      userId = token;
     } else {
       userId = data.uuid;
       window.localStorage.setItem('accessToken', userId);
@@ -342,7 +344,7 @@ Promise.all([
     }
 
     // 초기 게임 데이터 요청
-    sendEvent(1, { token });
+    sendEvent(1, {});
 
     if (!isInitGame) {
       initGame();
