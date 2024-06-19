@@ -3,13 +3,13 @@ import { getTower } from '../models/tower.model.js'; // 임의로 작성
 import { getUser } from '../models/user.model.js';
 import { setMonster, setDieMonster } from '../models/monster.model.js';
 
-export const removeMonster = (userId, payload) => {
+export const removeMonster = (userId, socket, payload) => {
   // game.js 227번째 줄
   if (payload.hp > 0) {
     return { status: 'fail', message: '비정상적인 제거입니다.' };
   }
 
-  setDieMonster(userId, payload.id);
+  setDieMonster(userId, payload.monster);
 
   // 현재 score에 +100을 추가
   const userGameState = getUser(userId);
