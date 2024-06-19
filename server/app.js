@@ -12,6 +12,7 @@ const PORT = process.env.PORT_NUMBER;
 
 app.use(express.json());
 app.use(express.urlencoded( {extended: false} ));
+app.use(express.static('tower_defense_client'));
 initSocket(server);
 
 app.get('/', (req, res) => {
