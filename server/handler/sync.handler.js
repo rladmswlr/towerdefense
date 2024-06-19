@@ -1,8 +1,15 @@
 import { getUserById } from '../models/user.model.js';
+import { getGameAssets } from "../init/assets.js"
+import { gameStart} from './game.handler.js'
 
 const initializeGameHandler = (userId, payload, io) => {
   // 초기화 요청 처리 로직
-  const userGameState = getUserById(userId);
+  const { init } = getGameAssets();
+  gameStart(userId);
+  const userGameState = {
+    data : init,
+    userId : userId,
+  }
   if (userGameState) {
     return {
       status: 'success',
