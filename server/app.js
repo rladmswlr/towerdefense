@@ -1,6 +1,9 @@
 import express from "express";
 import {createServer} from 'http';
 import initSocket from "./init/socket.js";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const app = express();
 const server = createServer(app);
@@ -8,10 +11,12 @@ const server = createServer(app);
 const PORT = process.env.PORT_NUMBER;
 
 app.use(express.json());
+app.use(express.urlencoded( {extended: false} ));
+app.use(express.static('tower_defense_client'));
 initSocket(server);
 
 app.get('/', (req, res) => {
-    res.send('Hello World');
+    res.send('Hello World!');
 });
 
 server.listen(PORT, async() => {
