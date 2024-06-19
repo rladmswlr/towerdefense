@@ -1,4 +1,4 @@
-import { sendEvent } from "./game";
+import { sendEvent } from "./game.js";
 
 export class Tower {
   constructor(towerId ,x, y, cost) {

@@ -3,6 +3,8 @@ let score = 0;
 let scoreChecker = 0;
 let level = 1;
 
+let game = [];
+
 let highScore = 0;
 
 export const setScore = (data) => {
@@ -29,6 +31,8 @@ export const getLevel = () => {
   return level;
 }
 
-export const initLevel = () => {
-  
+export const clearLevel = () => {
+  level = 1;
+  score = 0;
+  scoreChecker = 0;
 }

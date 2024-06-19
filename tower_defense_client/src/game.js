@@ -29,7 +29,7 @@ let highScore = 0; // 기존 최고 점수
 let isInitGame = false;
 
 let towerId = 0;
-// let sendEvent;
+
 // 이미지 로딩 파트
 const backgroundImage = new Image();
 backgroundImage.src = 'images/bg.webp';
@@ -287,15 +287,15 @@ Promise.all([
   ...monsterImages.map((img) => new Promise((resolve) => (img.onload = resolve))),
 ]).then(() => {
   /* 서버 접속 코드 (여기도 완성해주세요!) */
-  let somewhere;
+  let token = localStorage.getItem('accessToken');
   serverSocket = io('http://localhost:8080', {
     query: {
-      token: somewhere, // 토큰이 저장된 어딘가에서 가져와야 합니다!
+      token: token, 
       clientVersion : CLIENT_VERSION,
     },
 
     auth: {
-      token: somewhere, // 토큰이 저장된 어딘가에서 가져와야 합니다!
+      token: token, 
     },
   });
 

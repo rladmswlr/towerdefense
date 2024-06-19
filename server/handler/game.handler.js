@@ -12,9 +12,12 @@ export const gameStart = (uuid, payload) =>{
     clearLevel(uuid);
     clearTower(uuid);
     clearMonster(uuid);
-    setLevel(uuid);
-    const data = {init};
-    return {status: 'success', payload : data};
+    serverSocket.emit('event', {
+        userId : uuid,
+        clientVersion: CLIENT_VERSION,
+        handlerId : 1,
+        payload : init,
+      });
 }
 
 export const gameEnd = (uuid, payload) =>{
