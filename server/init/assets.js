@@ -23,22 +23,22 @@ const readFileAsync = (filename) => {
   });
 };
 
-export const loadGameAssets = async () => {
-  try {
-    // 사용할 asset 작성
-    const [
-      /* 이름 작성 */
-    ] = await Promise.all([
-      // 예시
-      //readFileAsync('stage.json'),
-    ]);
+export const loadGameAssets = async() => {
+    try{
+        // 사용할 asset 작성
+        const [ init, level, monster, tower] = await Promise.all([
+            readFileAsync('init.json'),
+            readFileAsync('level.json'),
+            readFileAsync('monster.json'),
+            readFileAsync('tower.json'),
+        ]);
 
-    gameAssets = { stages, items, itemUnlocks };
-    return gameAssets;
-  } catch (e) {
-    throw new Error('Failed to load game assets: ' + e.message);
-  }
-};
+        gameAssets = { init, level, monster, tower};
+        return gameAssets;
+    }catch(e){
+    throw new Error('Failed to load game assets: '+ e.message);
+    }
+}
 
 export const getGameAssets = () => {
   return gameAssets;

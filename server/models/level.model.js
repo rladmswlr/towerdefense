@@ -26,3 +26,7 @@ export const increaseLevel = () => {
 export const getLevel = () => {
   return level;
 }
+
+export const initLevel = () => {
+  
+}

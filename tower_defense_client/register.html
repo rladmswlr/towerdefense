@@ -44,13 +44,33 @@
       <button id="back">뒤로가기</button>
     </div>
     <script>
-      document.getElementById('register').addEventListener('click', () => {
+      document.getElementById('register').addEventListener('click', async  () => {
         const username = document.getElementById('username').value;
         const password = document.getElementById('password').value;
 
         /* 
           회원가입 API 호출 후 회원가입 성공 시 index.html로 이동시켜주세요!
         */
+        try {
+          const response = await fetch('/api/sign-up', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ id: username, password }),
+          });
+          
+          const data = await response.json();
+        
+          if (!response.ok) {
+            throw new Error(data.message);
+          }
+
+          window.location.href = 'index.html'; //회원가입 API 호출 후 회원가입 성공 시 index.html로 이동시켜주세요!
+        } catch (error) {
+          alert(error.message);
+        }
+
       });
 
       document.getElementById('back').addEventListener('click', () => {

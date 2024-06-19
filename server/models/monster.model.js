@@ -21,4 +21,8 @@ export const getDieMonster = (uuid) => {
 
 export const setDieMonster = (uuid, monster) => {
   return monsters[uuid].push({ monster });
-};
+}
+
+export const clearMonster = (uuid) => {
+  monsters[uuid] = [];
+}
