@@ -1,18 +1,19 @@
 import { getGameAssets } from "../init/assets.js"
 import { clearMonster } from '../models/monster.model.js'
 import { clearTower } from '../models/tower.model.js'
-import { clearLevel } from '../models/level.model.js'
+import { clearLevel, setLevel } from '../models/level.model.js'
 
 
 export const gameStart = (uuid, payload) =>{
 
-    const { init, level, monster, tower  } = getGameAssets();    
+    const { init } = getGameAssets();    
     // clear level
-    // clearLevel(uuid);
+    clearLevel(uuid);
     clearTower(uuid);
     clearMonster(uuid);
-    
-    return {status: 'success'};
+    setLevel(uuid);
+    const data = {init};
+    return {status: 'success', payload : data};
 }
 
 export const gameEnd = (uuid, payload) =>{
