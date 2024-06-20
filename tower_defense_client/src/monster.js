@@ -23,8 +23,8 @@ export class Monster {
   }
 
   init(level) {
-    if(this.monsterNumber==4) { this.maxHp=75 + 5*level; }
-    else if(this.monsterNumber==3) { this.maxHp=150 + 20*level; }
+    if(this.monsterNumber==4) { this.maxHp=70 + 5*level; }
+    else if(this.monsterNumber==3) { this.maxHp=130 + 20*level; }
     else { this.maxHp = 100 + 10 * level; } // 몬스터의 현재 HP
     this.hp = this.maxHp; // 몬스터의 현재 HP
     this.attackPower = 10 + 1 * level; // 몬스터의 공격력 (기지에 가해지는 데미지)
