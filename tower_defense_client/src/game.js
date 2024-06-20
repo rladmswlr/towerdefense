@@ -31,6 +31,7 @@ let isInitGame = false;
 let isDeath = false;
 
 let towerId = 0;
+let isrefund = false;
 
 // 이미지 로딩 파트
 const backgroundImage = new Image();
@@ -178,6 +179,36 @@ function placeNewTower() {
   }
 }
 
+function refundTower() {
+
+  isrefund ? isrefund = false : isrefund = true;
+}
+
+//타워 클릭 이벤트
+canvas.addEventListener('click', (event) => {
+  const rect = canvas.getBoundingClientRect();
+  const clickX = event.clientX - rect.left;
+  const clickY = event.clientY - rect.top;
+  const towerRangeX = 30;
+  const towerRangeY = 30;
+
+  for (let i = 0; i < towers.length; i++) {
+    const tower = towers[i];
+
+    const towerCenterX = tower.x + tower.width / 2;
+    const towerCenterY = tower.y + tower.height / 2;
+
+    const deltaX = Math.abs(towerCenterX - clickX);
+    const deltaY = Math.abs(towerCenterY - clickY);
+
+    if (deltaX <= towerRangeX && deltaY <= towerRangeY && isrefund) {
+      console.log(tower);
+      sendEvent(8, {towerId : tower.towerId, towerpos: {x : tower.x , y : tower.y}});
+      towers.splice(i, 1);
+    }
+  }
+});
+
 function placeBase() {
   const lastPoint = monsterPath[monsterPath.length - 1];
   base = new Base(lastPoint.x, lastPoint.y, baseHp);
@@ -202,6 +233,12 @@ function gameLoop() {
   ctx.fillText(`골드: ${userGold}`, 100, 150); // 골드 표시
   ctx.fillStyle = 'black';
   ctx.fillText(`현재 레벨: ${monsterLevel}`, 100, 200); // 최고 기록 표시
+
+
+  if(isrefund){
+    ctx.fillStyle = 'black';
+    ctx.fillText(`타워 환불 모드 ON`, 800, 150); // 최고 기록 표시
+  }
 
   // 타워 그리기 및 몬스터 공격 처리
   towers.forEach((tower) => {
@@ -365,6 +402,20 @@ buyTowerButton.style.cursor = 'pointer';
 buyTowerButton.addEventListener('click', placeNewTower);
 
 document.body.appendChild(buyTowerButton);
+
+
+const refundTowerButton = document.createElement('button');
+refundTowerButton.textContent = '타워 환불';
+refundTowerButton.style.position = 'absolute';
+refundTowerButton.style.top = '90px';
+refundTowerButton.style.right = '10px';
+refundTowerButton.style.padding = '10px 20px';
+refundTowerButton.style.fontSize = '16px';
+refundTowerButton.style.cursor = 'pointer';
+
+refundTowerButton.addEventListener('click', refundTower);
+
+document.body.appendChild(refundTowerButton);
 
 const sendEvent = (handlerId, payload) => {
   serverSocket.emit('event', {
