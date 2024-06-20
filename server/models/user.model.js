@@ -1,15 +1,16 @@
 const users = [];
 
 export const addUser = (token, init, socket) => {
+  console.log('Received init object:', init);
   const newUser = {
     token: token,
-    userGold: init.userGold,
-    baseHp: init.baseHp,
-    towerCost: init.towercost,
-    numOfInitialTowers: init.numOfInitialTowers,
-    monsterLevel: init.monsterLevel,
-    monsterSpawnInterval: init.monsterSpawnInterval,
-    score: init.score,
+    userGold: init.data.userGold,
+    baseHp: init.data.baseHp,
+    towerCost: init.data.towercost,
+    numOfInitialTowers: init.data.numOfInitialTowers,
+    monsterLevel: init.data.monsterLevel,
+    monsterSpawnInterval: init.data.monsterSpawnInterval,
+    score: init.data.score,
     highScore: 0,
     socketId: socket,
   };

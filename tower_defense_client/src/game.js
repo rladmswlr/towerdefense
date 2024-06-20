@@ -213,10 +213,6 @@ function gameLoop() {
       );
       if (distance < tower.range) {
         tower.attack(monster);
-        sendEvent(13, {
-          towerId: tower.towerId,
-          attackPower: tower.attackPower,
-        });
       }
     });
   });
@@ -237,9 +233,6 @@ function gameLoop() {
     } else {
       /* 몬스터가 죽었을 때 */
       monsters.splice(i, 1);
-      sendEvent(12, {
-        monster,
-      });
     }
   }
 
@@ -355,6 +348,7 @@ Promise.all([
   }
 
   serverSocket.on('updateGameState', (syncData) => {
+    console.log('Received updateGameState:', syncData);
     updateGameState(syncData);
   });
 });

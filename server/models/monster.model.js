@@ -12,9 +12,9 @@ export const getMonster = (uuid) => {
   return monsters[uuid];
 };
 
-export const setMonster = (uuid, monster) => {
+export const setMonster = (uuid, level, attackPower) => {
   // 삽입
-  return monsters[uuid].push({ monster });
+  return monsters[uuid].push({ level, attackPower });
 };
 
 export const getDieMonster = (uuid) => {

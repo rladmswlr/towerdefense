@@ -15,7 +15,7 @@ export const initTower = (userId, payload) => {
 
   //타워의 데이터 저장
   setTower(userId, payload.towerId, payload.position, serverTime);
-  return { status: 'success' };
+  return { status: 'success', message: '타워 배치 완료' };
 };
 
 export const buyTower = (userId, payload) => {

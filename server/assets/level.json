@@ -1,13 +1,16 @@
 {
-  "name": "stage",
+  "name": "level",
   "version": "1.0.0",
   "data": [
-    { "id": 2000, "target_score": 2000, "reward": 1000 },
-    { "id": 2001, "target_score": 4000, "reward": 2000 },
-    { "id": 2002, "target_score": 6000, "reward": 3000 },
-    { "id": 2003, "target_score": 8000, "reward": 4000 },
-    { "id": 2004, "target_score": 10000, "reward": 5000 },
-    { "id": 2005, "target_score": 12000, "reward": 6000 },
-    { "id": 2006, "target_score": 14000, "reward": 7000 }
+    { "id": 1, "power": 11 },
+    { "id": 2, "power": 12 },
+    { "id": 3, "power": 13 },
+    { "id": 4, "power": 14 },
+    { "id": 5, "power": 15 },
+    { "id": 6, "power": 16 },
+    { "id": 7, "power": 17 },
+    { "id": 8, "power": 18 },
+    { "id": 9, "power": 19 },
+    { "id": 10, "power": 20 }
   ]
 }
