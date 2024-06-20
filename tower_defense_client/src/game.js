@@ -261,8 +261,9 @@ function gameLoop() {
     const monster = monsters[i];
     if (monster.hp > 0) {
       const isDestroyed = monster.move(base);
-      if (isDestroyed) {
+      if (isDeath) {
         /* 게임 오버 */
+        isDeath = false;
         alert('게임 오버. 스파르타 본부를 지키지 못했다...ㅠㅠ');
         location.reload();
       }
