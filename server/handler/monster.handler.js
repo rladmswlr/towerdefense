@@ -32,7 +32,12 @@ export const removeMonster = (userId, payload, socket) => {
 export const damageMonster = (userId, payload) => {
   const { towerId, attackPower } = payload; // game.js 201번째 줄
 
+  // console.log(towerId);
+
+  // console.log(attackPower);
+
   const towers = getTower(userId); // 임의로 작성
+  console.log(towers);
   const tower = towers.find((tower) => tower.id === towerId);
   if (!tower) {
     return { status: 'fail', message: '존재하지 않는 타워입니다.' };
