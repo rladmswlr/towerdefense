@@ -26,9 +26,14 @@ router.post('/sign-up', async (req, res, next) => {
   }
   const hashedPassword = await bcrypt.hash(password, saltRounds);
   // Create new user
-  await prisma.user.create({
+  const registeredUser = await prisma.user.create({
     data: { id, password: hashedPassword },
   });
+
+  await prisma.rank.create({
+    data : {user_Id : registeredUser.user_Id, highscore : 0},
+  })
+  
 
   return res.status(201).json({ message: '회원가입이 완료되었습니다' });
 });
@@ -43,7 +48,7 @@ router.post('/sign-in', async (req, res, next) => {
   }
   const token = jwt.sign(
     {
-      userId: user.userId,
+      userId: user.user_Id,
     },
     process.env.CUSTOM_SECRET_KEY,
   );
