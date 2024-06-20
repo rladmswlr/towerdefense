@@ -14,6 +14,7 @@ export class Tower {
     this.cooldown = 0; // 타워 공격 쿨타임
     this.beamDuration = 0; // 타워 광선 지속 시간
     this.target = null; // 타워 광선의 목표
+    this.level = 1;
   }
 
   draw(ctx, towerImage) {
@@ -22,18 +23,32 @@ export class Tower {
       ctx.beginPath();
       ctx.moveTo(this.x + this.width / 2, this.y + this.height / 2);
       ctx.lineTo(this.target.x + this.target.width / 2, this.target.y + this.target.height / 2);
+      if(this.level == 1){
       ctx.strokeStyle = 'skyblue';
+      }else if(this.level == 2){
+        ctx.strokeStyle = 'yellow';
+      }else if(this.level == 3){
+        ctx.strokeStyle = 'red';
+      }else if(this.level == 4){
+        ctx.strokeStyle = 'green';
+      }else{
+        ctx.strokeStyle = 'black';
+      }
       ctx.lineWidth = 10;
       ctx.stroke();
       ctx.closePath();
       this.beamDuration--;
     }
+    ctx.font = '20px Arial';
+    ctx.fillStyle = 'white';
+    ctx.fillText(`(레벨 ${this.level})`, this.x + 5, this.y - 25);
+    ctx.fillText(`(공격력 ${this.attackPower + 10 * (this.level - 1)})`, this.x - 7, this.y + 0);
   }
 
   attack(monster) {
     // 타워가 타워 사정거리 내에 있는 몬스터를 공격하는 메소드이며 사정거리에 닿는지 여부는 game.js에서 확인합니다.
     if (this.cooldown <= 0) {
-      monster.hp -= this.attackPower;
+      monster.hp -= this.attackPower + 10 * (this.level - 1);
       sendEvent(13, {
         towerId: this.towerId,
         attackPower: this.attackPower,
