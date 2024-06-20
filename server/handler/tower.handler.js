@@ -1,4 +1,4 @@
-import { getTower, setAttackTower, setTower } from '../models/tower.model.js';
+import { getTower, setAttackTower, setRefundTower, setTower } from '../models/tower.model.js';
 import { getUserById } from '../models/user.model.js';
 
 // 타워 초기 세팅 값
@@ -58,7 +58,7 @@ export const attackTower = (userId, payload) => {
   }
 
   // 해당 위치의 타워가 존재하는지 체크
-  if (tower.towerpos.x != payload.towerpos.x && tower.towerpos.y != payload.towerpos.y) {
+  if (tower.positon.x != payload.towerpos.x && tower.position.y != payload.towerpos.y) {
     return { status: 'fail', message: 'Position is Not Matching' };
   }
 
@@ -77,3 +77,41 @@ export const attackTower = (userId, payload) => {
 
   return { status: 'success', message: 'towerattack' };
 };
+
+
+export const refundTower = (userId, payload, socket) => {
+
+  const towers = getTower(userId);
+
+  //타워의 데이터 찾기 현재 때린 타워의 ID를 기반으로 저장된 타워를 찾는다.
+  const tower = towers.find((data) => data.id === payload.towerId);
+
+
+  //해당 Id의 타워가 존재하는지 체크
+  if (!tower) {
+    return { status: 'fail', message: 'There is No Tower' };
+  }
+  
+  // 해당 위치의 타워가 존재하는지 체크
+  if (tower.position.x != payload.towerpos.x && tower.position.y != payload.towerpos.y) {
+    return { status: 'fail', message: 'Position is Not Matching' };
+  }
+
+
+  
+  const userGameState = getUserById(userId);
+
+  userGameState.userGold += Math.floor(userGameState.towerCost * (1 / 2));
+
+  // 업데이트된 게임 상태를 클라이언트에 전송
+  socket.emit('updateGameState', {
+    userGold: userGameState.userGold,
+  });
+
+
+  const serverTime = Date.now(); // 현재 타임스탬프
+
+  setRefundTower(userId, payload.towerId, serverTime);
+
+  return { status: 'success', message: 'towerRefund' };
+}
