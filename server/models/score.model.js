@@ -3,12 +3,11 @@ import jwt from 'jsonwebtoken';
 
 export const addHighScore = async (token, score) => {
 
-  const decodedToken = checkToken(token);
   
   try{
     const isExistUser = await prisma.user.findFirst({
       where:{
-        id:decodedToken,
+        user_Id: token.userId,
       }
     })
     if(isExistUser) {
@@ -17,7 +16,7 @@ export const addHighScore = async (token, score) => {
 
     const target = await prisma.rank.create({
       data : {
-        id : decodedToken,
+        user_Id : token.userId,
         highscore : score
       }
     })
@@ -30,11 +29,10 @@ export const addHighScore = async (token, score) => {
 };
 
 export const updateHighScore = async(token, score) =>{
-  const decodedToken = checkToken(token);
   try{
     const isExistUser = await prisma.user.findFirst({
       where:{
-        id:decodedToken,
+        user_Id: token.userId,
       }
     })
     if(isExistUser) {
@@ -43,7 +41,7 @@ export const updateHighScore = async(token, score) =>{
 
     const target = await prisma.rank.update({
       where:{
-        id : decodedToken,
+        user_Id : token.userId,
       },
       data : {
         highscore : score
@@ -57,13 +55,12 @@ export const updateHighScore = async(token, score) =>{
 }
 
 // 최고 점수 조회
-export const getHighScore = async (token, score) => {
-  return 100;
-  const decodedToken = checkToken(token);
+export const getHighScore = async (token) => {
+  console.log("token 확인>>",token);
   try{
     const isExistUser = await prisma.user.findFirst({
       where:{
-        id:decodedToken,
+        user_Id:token.userId,
       }
     })
     if(isExistUser) {
@@ -72,7 +69,7 @@ export const getHighScore = async (token, score) => {
 
     const target = await prisma.rank.findFirst({
       where:{
-        id : decodedToken,
+        user_Id : decodedToken,
       }
     })
 
@@ -81,14 +78,3 @@ export const getHighScore = async (token, score) => {
     console.error(err.message);
   }
 };
-
-
-function checkToken(token){
-  const checkToken = token.split(' ')
-  if (checkToken.length < 2){
-    const decodedToken = jwt.verify(token, process.env.CUSTOM_SECRET_KEY);
-  } else{
-    const decodedToken = jwt.verify(token[1], process.env.CUSTOM_SECRET_KEY);
-  }
-  return decodedToken;
-}
