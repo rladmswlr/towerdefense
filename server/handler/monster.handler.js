@@ -18,12 +18,14 @@ export const removeMonster = (userId, payload, socket) => {
 
   if (userGameState.score % 2000 === 0) {
     userGameState.userGold += 1000;
+    userGameState.monsterLevel += 1;
   }
 
   // 업데이트된 게임 상태를 클라이언트에 전송
   socket.emit('updateGameState', {
     score: userGameState.score,
     userGold: userGameState.userGold,
+    monsterLevel: userGameState.monsterLevel
   });
 
   return { status: 'success', message: '몬스터를 제거했습니다.' };
