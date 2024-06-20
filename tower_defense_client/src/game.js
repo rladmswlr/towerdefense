@@ -28,6 +28,7 @@ const towers = [];
 let score = 0; // 게임 점수
 let highScore = 0; // 기존 최고 점수
 let isInitGame = false;
+let isDeath = false;
 
 let towerId = 0;
 
@@ -212,10 +213,6 @@ function gameLoop() {
       );
       if (distance < tower.range) {
         tower.attack(monster);
-        sendEvent(13, {
-          towerId: tower.id,
-          attackPower: tower.attackPower
-        });
       }
     });
   });
@@ -236,9 +233,6 @@ function gameLoop() {
     } else {
       /* 몬스터가 죽었을 때 */
       monsters.splice(i, 1);
-      sendEvent(12, {
-        monster,
-      });
     }
   }
 
@@ -252,11 +246,8 @@ function initGame() {
 
   monsterPath = generateRandomMonsterPath(); // 몬스터 경로 생성
   initMap(); // 맵 초기화 (배경, 몬스터 경로 그리기)
-  console.log('초기화확인');
   placeInitialTowers(); // 설정된 초기 타워 개수만큼 사전에 타워 배치
-  console.log('초기화확인2');
   placeBase(); // 기지 배치
-
   setInterval(spawnMonster, monsterSpawnInterval); // 설정된 몬스터 생성 주기마다 몬스0터 생성
   gameLoop(); // 게임 루프 최초 실행
   isInitGame = true;
@@ -285,11 +276,11 @@ Promise.all([
   const token = localStorage.getItem('accessToken');
   serverSocket = io('http://localhost:8080', {
     query: {
-      token: token, 
-      clientVersion : CLIENT_VERSION,
+      token: token,
+      clientVersion: CLIENT_VERSION,
     },
     auth: {
-      token: token, 
+      token: token,
     },
   });
 
@@ -305,8 +296,7 @@ Promise.all([
   const handlerMappings = {
     // 서버에서부터 받은 이벤트 코드
     1: (data) => {
-      if (data.status === 'success') { 
-        console.log(data.data.data.data);
+      if (data.status === 'success') {
         initializeGameState(data.data.data.data);
       } else {
         console.error(`초기화에 실패하였습니다. ${data.message}`);
@@ -324,20 +314,16 @@ Promise.all([
 
   serverSocket.on('response', async (data) => {
     // helper.js의 socket.emit('response', response);
-    const handler = await handlerMappings[data.handlerId];
-    
-    // 배열에 저장한 함수를 실행하는 방법 탐색결과 : 찾았음
-    //handlerMappings[data.handlerId](data);
 
-    if (!handler) {
-      console.log(data);
-      console.error(`핸들러 ID를 찾을 수 없습니다. ${data.handlerId}`);
-    } else {
+    const handler = handlerMappings[data.handlerId];
+    if (handler) {
       handler(data);
+    } else {
+      console.log(data);
     }
   });
 
-  serverSocket.on('connection', (data) => {
+  serverSocket.on('connection', async (data) => {
     const token = window.localStorage.getItem('accessToken');
     if (token) {
       console.log(`클라이언트 정보가 확인됐습니다. ${token}`);
@@ -347,17 +333,22 @@ Promise.all([
       window.localStorage.setItem('accessToken', userId);
       console.log(`클라이언트 정보가 확인되지 않았습니다. ${userId}`);
     }
-
     // 초기 게임 데이터 요청
-    const res = sendEvent(1, {payload:userId});
-    console.log(res);
+    sendEvent(1, { payload: userId });
 
-    if (!isInitGame) {
-      initGame();
-    }
+    sleep(100).then(() => {
+      if (!isInitGame) {
+        initGame();
+      }
+    });
   });
 
+  function sleep(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
   serverSocket.on('updateGameState', (syncData) => {
+    console.log('Received updateGameState:', syncData);
     updateGameState(syncData);
   });
 });
@@ -389,6 +380,7 @@ const updateGameState = (syncData) => {
   baseHp = syncData.baseHp !== undefined ? syncData.baseHp : baseHp;
   score = syncData.score !== undefined ? syncData.score : score;
   highScore = syncData.highScore !== undefined ? syncData.highScore : highScore;
+  isDeath = syncData.isDeath !== undefined ? syncData.isDeath : isDeath;
 };
 
 export { sendEvent };

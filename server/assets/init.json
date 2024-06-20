@@ -2,6 +2,7 @@
   "name": "init",
   "version": "1.0.0",
   "data": {
+    "highScore": 0,
     "userGold": 1000,
     "baseHp": 200,
     "towerCost": 200,
