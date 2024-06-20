@@ -214,7 +214,7 @@ function gameLoop() {
       if (distance < tower.range) {
         tower.attack(monster);
         sendEvent(13, {
-          towerId: tower.id,
+          towerId: tower.towerId,
           attackPower: tower.attackPower,
         });
       }
@@ -327,7 +327,6 @@ Promise.all([
       handler(data);
     } else {
       console.log(data);
-      console.error(`핸들러 ID를 찾을 수 없습니다. ${data.handlerId}`);
     }
   });
 

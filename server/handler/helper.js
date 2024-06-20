@@ -34,7 +34,7 @@ export const handlerEvent = (socket, data, io) => {
     return;
   }
 
-  const response = handler(data.userId, socket, data.payload, io);
+  const response = handler(data.userId, data.payload, socket, io);
 
   // 모든 유저에게 보내는 정보
   if (response.broadcast) {
