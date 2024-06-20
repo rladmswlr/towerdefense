@@ -71,7 +71,11 @@ export class Tower {
         sendEvent(12, {
           monster,
         });
-        playSound(monsterdeadsound);
+        if(monster.isGolden){
+          playSound(goldmonstersound);
+        } else{
+          playSound(monsterdeadsound);
+        }
       }
       this.cooldown = 180; // 3초 쿨타임 (초당 60프레임)
       this.beamDuration = 30; // 광선 지속 시간 (0.5초)
