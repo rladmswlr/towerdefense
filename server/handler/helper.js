@@ -1,7 +1,7 @@
 import { CLIENT_VERSION } from '../constants.js';
 import { removeUser } from '../models/user.model.js';
 import handlerMappings from './handlerMapping.js';
-import { getHighScore } from '../models/score.model.js';
+import { getHightScoreUsers } from '../models/score.model.js';
 import jwt from 'jsonwebtoken';
 
 export const handleDisconnect = (socket, uuid) => {
@@ -14,8 +14,9 @@ export const handleConnection = async (socket, uuid) => {
   try {
     const decodedToken = jwt.verify(token[1], process.env.CUSTOM_SECRET_KEY);
     // console.log(`docodedToken Check, ${JSON.stringify(decodedToken)}, \n\n [token] ----- \n ${token}`);
-    const highScore = await getHighScore(decodedToken);
-    socket.emit('connection', { uuid, highScore });
+    const highScoreList = await getHightScoreUsers(decodedToken);
+    const highScore = highScoreList[0].highscore;
+    socket.emit('connection', { uuid, highScore});
   } catch (error) {
     socket.emit('connection', { status: 'fail', message: 'Invalid or expired token' });
     socket.disconnect(); // 토큰 검증 실패 시 연결 종료

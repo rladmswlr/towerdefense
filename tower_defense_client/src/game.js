@@ -263,6 +263,7 @@ function gameLoop() {
       const isDestroyed = monster.move(base);
       if (isDeath) {
         /* 게임 오버 */
+        sendEvent(20,{ payload: {userId, score} });
         isDeath = false;
         alert('게임 오버. 스파르타 본부를 지키지 못했다...ㅠㅠ');
         location.reload();

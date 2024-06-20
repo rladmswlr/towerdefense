@@ -8,7 +8,7 @@ export const addHighScore = async (token, score) => {
         user_Id: token.userId,
       }
     })
-    if(isExistUser) {
+    if(!isExistUser) {
       throw new Error('존재하지 않는 유저의 High Score를 추가하려합니다');
     }
 
@@ -33,7 +33,7 @@ export const updateHighScore = async(token, score) =>{
         user_Id: token.userId,
       }
     })
-    if(isExistUser) {
+    if(!isExistUser) {
       throw new Error('존재하지 않는 유저의 High Score를 수정하려합니다');
     }
 
@@ -61,7 +61,7 @@ export const getHighScore = async (token) => {
         user_Id:token.userId,
       }
     })
-    if(isExistUser) {
+    if(!isExistUser) {
       throw new Error('존재하지 않는 유저의 High Score를 확인하려합니다');
     }
 
@@ -86,7 +86,7 @@ export const getHightScoreUsers = async () =>{
       }
     })
 
-    
+    return scoreList;
   } catch (err) {
     console.error(err.message);
   }
