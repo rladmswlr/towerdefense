@@ -1,7 +1,7 @@
 import { getGameAssets } from '../init/assets.js'; // 임의로 작성
 import { getTower } from '../models/tower.model.js'; // 임의로 작성
 import { getUserById } from '../models/user.model.js';
-import { setMonster, setDieMonster } from '../models/monster.model.js';
+import { getMonster, setMonster, setDieMonster } from '../models/monster.model.js';
 
 export const removeMonster = (userId, payload, socket) => {
   // game.js 227번째 줄
@@ -47,11 +47,24 @@ export const damageMonster = (userId, payload) => {
 };
 
 export const monsterAttackBase = (userId, payload, socket) => {
-  const { monstersData, monsterLevelsData } = getGameAssets(); // 임의로 작성
+  const { levelsData } = getGameAssets(); // 임의로 작성
 
-  const { monsterId, level, attackPower } = payload; // monster.js 46번째 줄
+  const { level, attackPower } = payload; // monster.js 46번째 줄
 
-  setMonster(userId, monsterId, level);
+  setMonster(userId, level, attackPower);
+
+  let currentLevels = getMonster(userId);
+  currentLevels.sort((a, b) => a.level - b.level);
+  const currentLevel = currentLevels[currentLevels.length - 1];
+
+  const powerData = levelsData.data.find((level) => level.power === attackPower);
+  if (!powerData) {
+    return { status: 'fail', message: '존재하지 않는 파워입니다.' };
+  }
+
+  if (currentLevel.attackPower !== powerData.power) {
+    return { status: 'fail', message: '현재 레벨의 파워가 아닙니다.' };
+  }
 
   // 기지의 HP를 감소
   const userGameState = getUserById(userId);
@@ -63,5 +76,5 @@ export const monsterAttackBase = (userId, payload, socket) => {
     baseHp: userGameState.baseHp,
   });
 
-  return { status: 'success', messagae: '기지가 공격 당했습니다.' };
+  return { status: 'success', message: '기지가 공격 당했습니다.' };
 };
