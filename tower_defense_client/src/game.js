@@ -20,7 +20,7 @@ let baseHp = 0; // 기지 체력
 
 let towerCost = 500; // 타워 구입 비용
 let monsterLevel = 0; // 몬스터 레벨
- let monsterSpawnInterval = 1800; // 몬스터 생성 주기
+let monsterSpawnInterval = 1800; // 몬스터 생성 주기
 let numOfInitialTowers = 0;
 const monsters = [];
 const towers = [];
@@ -28,6 +28,7 @@ const towers = [];
 let score = 0; // 게임 점수
 let highScore = 0; // 기존 최고 점수
 let isInitGame = false;
+let isDeath = false;
 
 let towerId = 0;
 
@@ -213,7 +214,7 @@ function gameLoop() {
       if (distance < tower.range) {
         tower.attack(monster);
         sendEvent(13, {
-          towerId: tower.id,
+          towerId: tower.towerId,
           attackPower: tower.attackPower,
         });
       }
@@ -252,11 +253,8 @@ function initGame() {
 
   monsterPath = generateRandomMonsterPath(); // 몬스터 경로 생성
   initMap(); // 맵 초기화 (배경, 몬스터 경로 그리기)
-  console.log('초기화확인');
   placeInitialTowers(); // 설정된 초기 타워 개수만큼 사전에 타워 배치
-  console.log('초기화확인2');
   placeBase(); // 기지 배치
-
   setInterval(spawnMonster, monsterSpawnInterval); // 설정된 몬스터 생성 주기마다 몬스0터 생성
   gameLoop(); // 게임 루프 최초 실행
   isInitGame = true;
@@ -285,11 +283,11 @@ Promise.all([
   const token = localStorage.getItem('accessToken');
   serverSocket = io('http://localhost:8080', {
     query: {
-      token: token, 
-      clientVersion : CLIENT_VERSION,
+      token: token,
+      clientVersion: CLIENT_VERSION,
     },
     auth: {
-      token: token, 
+      token: token,
     },
   });
 
@@ -323,13 +321,12 @@ Promise.all([
 
   serverSocket.on('response', (data) => {
     // helper.js의 socket.emit('response', response);
-    
+
     const handler = handlerMappings[data.handlerId];
     if (handler) {
       handler(data);
     } else {
       console.log(data);
-      console.error(`핸들러 ID를 찾을 수 없습니다. ${data.handlerId}`);
     }
   });
 
@@ -344,17 +341,17 @@ Promise.all([
       console.log(`클라이언트 정보가 확인되지 않았습니다. ${userId}`);
     }
     // 초기 게임 데이터 요청
-    sendEvent(1, {payload:userId});
+    sendEvent(1, { payload: userId });
 
-    sleep(100).then(()=>{
+    sleep(100).then(() => {
       if (!isInitGame) {
         initGame();
-      } 
-    })
+      }
+    });
   });
 
-  function sleep(ms){
-    return new Promise(resolve => setTimeout(resolve, ms));
+  function sleep(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   serverSocket.on('updateGameState', (syncData) => {
@@ -384,13 +381,12 @@ const sendEvent = (handlerId, payload) => {
   });
 };
 
-
-
 const updateGameState = (syncData) => {
   userGold = syncData.userGold !== undefined ? syncData.userGold : userGold;
   baseHp = syncData.baseHp !== undefined ? syncData.baseHp : baseHp;
   score = syncData.score !== undefined ? syncData.score : score;
   highScore = syncData.highScore !== undefined ? syncData.highScore : highScore;
+  isDeath = syncData.isDeath !== undefined ? syncData.isDeath : isDeath;
 };
 
 export { sendEvent };

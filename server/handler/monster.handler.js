@@ -3,7 +3,7 @@ import { getTower } from '../models/tower.model.js'; // 임의로 작성
 import { getUser } from '../models/user.model.js';
 import { setMonster, setDieMonster } from '../models/monster.model.js';
 
-export const removeMonster = (userId, socket, payload) => {
+export const removeMonster = (userId, payload, socket) => {
   // game.js 227번째 줄
   if (payload.hp > 0) {
     return { status: 'fail', message: '비정상적인 제거입니다.' };
@@ -26,7 +26,12 @@ export const removeMonster = (userId, socket, payload) => {
 export const damageMonster = (userId, payload) => {
   const { towerId, attackPower } = payload; // game.js 201번째 줄
 
+  // console.log(towerId);
+
+  // console.log(attackPower);
+
   const towers = getTower(userId); // 임의로 작성
+  console.log(towers);
   const tower = towers.find((tower) => tower.id === towerId);
   if (!tower) {
     return { status: 'fail', message: '존재하지 않는 타워입니다.' };
