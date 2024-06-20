@@ -25,6 +25,7 @@ export const removeMonster = (userId, payload, socket) => {
   socket.emit('updateGameState', {
     score: userGameState.score,
     userGold: userGameState.userGold,
+    monsterLevel: userGameState.monsterLevel
   });
 
   return { status: 'success', message: '몬스터를 제거했습니다.' };

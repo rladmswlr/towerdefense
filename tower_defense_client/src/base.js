@@ -30,6 +30,7 @@ export class Base {
   }
 
   takeDamage(amount) {
+    console.log("Base is under attack!");
     // 기지가 데미지를 입는 메소드입니다.
     // 몬스터가 기지의 HP를 감소시키고, HP가 0 이하가 되면 게임 오버 처리를 해요!
     this.hp -= amount;

@@ -381,6 +381,7 @@ const updateGameState = (syncData) => {
   score = syncData.score !== undefined ? syncData.score : score;
   highScore = syncData.highScore !== undefined ? syncData.highScore : highScore;
   isDeath = syncData.isDeath !== undefined ? syncData.isDeath : isDeath;
+  monsterLevel = syncData.monsterLevel !== undefined ? syncData.monsterLevel : monsterLevel;
 };
 
 export { sendEvent };

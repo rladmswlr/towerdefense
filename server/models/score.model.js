@@ -58,8 +58,7 @@ export const updateHighScore = async(token, score) =>{
 
 // 최고 점수 조회
 export const getHighScore = async (token, score) => {
-  return 77777;
-  
+  return 100;
   const decodedToken = checkToken(token);
   try{
     const isExistUser = await prisma.user.findFirst({

@@ -1,4 +1,5 @@
 import { getTower, setAttackTower, setTower } from '../models/tower.model.js';
+import { getUserById } from '../models/user.model.js';
 
 // 타워 초기 세팅 값
 // 후에 asset의 저장되어있는 값으로 바뀔 수 있음
@@ -18,7 +19,7 @@ export const initTower = (userId, payload) => {
   return { status: 'success', message: '타워 배치 완료' };
 };
 
-export const buyTower = (userId, payload) => {
+export const buyTower = (userId, payload, socket) => {
   //타워의 가격 비교
   if (payload.userGold < payload.towerCost) {
     return { status: 'fail', message: 'There is little gold.' };
@@ -27,6 +28,15 @@ export const buyTower = (userId, payload) => {
   
 
   const serverTime = Date.now(); // 현재 타임스탬프
+
+  const userGameState = getUserById(userId);
+
+  userGameState.userGold -= userGameState.towerCost;
+
+  // 업데이트된 게임 상태를 클라이언트에 전송
+  socket.emit('updateGameState', {
+    userGold: userGameState.userGold,
+  });
 
   //타워의 데이터 저장
   setTower(userId, payload.towerId, payload.position, serverTime);
