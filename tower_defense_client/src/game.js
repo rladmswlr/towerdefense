@@ -54,6 +54,7 @@ for (let i = 1; i <= NUM_OF_MONSTERS; i++) {
 }
 
 let monsterPath;
+let lastX;
 
 function generateRandomMonsterPath() {
   const path = [];
@@ -62,30 +63,31 @@ function generateRandomMonsterPath() {
 
   path.push({ x: currentX, y: currentY });
 
-  while (currentX < canvas.width) {
+  while (currentX < canvas.width-120) {
     currentX += Math.floor(Math.random() * 100) + 50; // 50 ~ 150 범위의 x 증가
     // x 좌표에 대한 clamp 처리
-    if (currentX > canvas.width) {
-      currentX = canvas.width;
+    if (currentX > canvas.width-110) {
+      currentX = canvas.width-110;
     }
-
+    
     currentY += Math.floor(Math.random() * 200) - 100; // -100 ~ 100 범위의 y 변경
     // y 좌표에 대한 clamp 처리
-    if (currentY < 0) {
-      currentY = 0;
+    if (currentY < 220) {
+      currentY = 220;
     }
-    if (currentY > canvas.height) {
-      currentY = canvas.height;
+    if (currentY > canvas.height-80) {
+      currentY = canvas.height-80;
     }
 
     path.push({ x: currentX, y: currentY });
   }
+  const len = path.length;
 
   return path;
 }
 
 function initMap() {
-  ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height); // 배경 이미지 그리기
+  ctx.drawImage(backgroundImage, 0, 0, canvas.width-10, canvas.height-20); // 배경 이미지 그리기
   drawPath();
 }
 
@@ -100,6 +102,7 @@ function drawPath() {
     const startY = monsterPath[i].y;
     const endX = monsterPath[i + 1].x;
     const endY = monsterPath[i + 1].y;
+    
 
     const deltaX = endX - startX;
     const deltaY = endY - startY;
@@ -122,6 +125,7 @@ function drawRotatedImage(image, x, y, width, height, angle) {
   ctx.rotate(angle);
   ctx.drawImage(image, -width / 2, -height / 2, width, height);
   ctx.restore();
+  lastX = x + width + 60;   // 대략적인 길 끝지점
 }
 
 function getRandomPositionNearPath(maxDistance) {
@@ -135,13 +139,12 @@ function getRandomPositionNearPath(maxDistance) {
   const t = Math.random();
   const posX = startX + t * (endX - startX);
   const posY = startY + t * (endY - startY);
-
   const offsetX = (Math.random() - 0.5) * 2 * maxDistance;
   const offsetY = (Math.random() - 0.5) * 2 * maxDistance;
 
   return {
-    x: posX + offsetX,
-    y: posY + offsetY,
+    x: ((posX+offsetX)<=40) ? 40 : ((posX+offsetX)>=canvas.width-80) ? canvas.width-80 : posX+offsetX,
+    y: ((posY+offsetY)<=60) ? 60 : ((posY+offsetY)>=canvas.height-150) ? canvas.height-150 : posY+offsetY,
   };
 }
 
@@ -202,7 +205,6 @@ canvas.addEventListener('click', (event) => {
     const deltaY = Math.abs(towerCenterY - clickY);
 
     if (deltaX <= towerRangeX && deltaY <= towerRangeY && isrefund) {
-      console.log(tower);
       sendEvent(8, {towerId : tower.towerId, towerpos: {x : tower.x , y : tower.y}});
       towers.splice(i, 1);
     }
@@ -211,7 +213,8 @@ canvas.addEventListener('click', (event) => {
 
 function placeBase() {
   const lastPoint = monsterPath[monsterPath.length - 1];
-  base = new Base(lastPoint.x, lastPoint.y, baseHp);
+  if(lastX>=1920) lastX=1920;
+  base = new Base(lastX, lastPoint.y, baseHp);
   base.draw(ctx, baseImage);
 }
 
@@ -263,8 +266,9 @@ function gameLoop() {
       const isDestroyed = monster.move(base);
       if (isDeath) {
         /* 게임 오버 */
+        isDeath = false;
         alert('게임 오버. 스파르타 본부를 지키지 못했다...ㅠㅠ');
-        //location.reload();
+        location.reload();
       }
       monster.draw(ctx);
     } else {
@@ -407,8 +411,8 @@ document.body.appendChild(buyTowerButton);
 const refundTowerButton = document.createElement('button');
 refundTowerButton.textContent = '타워 환불';
 refundTowerButton.style.position = 'absolute';
-refundTowerButton.style.top = '90px';
-refundTowerButton.style.right = '10px';
+refundTowerButton.style.top = '10px';
+refundTowerButton.style.right = '150px';
 refundTowerButton.style.padding = '10px 20px';
 refundTowerButton.style.fontSize = '16px';
 refundTowerButton.style.cursor = 'pointer';

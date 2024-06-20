@@ -2,13 +2,12 @@
   "name": "init",
   "version": "1.0.0",
   "data": {
-    "highScore": 0,
     "userGold": 1000,
     "baseHp": 200,
     "towerCost": 200,
     "numOfInitialTowers": 3,
     "monsterLevel": 1,
-    "monsterSpawnInterval": 1800,
+    "monsterSpawnInterval": 1200,
     "score": 0,
     "highScore": 0
   }

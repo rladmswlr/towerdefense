@@ -28,6 +28,14 @@ export class Tower {
       ctx.closePath();
       this.beamDuration--;
     }
+
+    ctx.font = '16px Arial';
+    ctx.fillStyle = 'white';
+    ctx.fillText(
+      `LEVEL: ${this.level}`,
+      this.x - this.width,
+      this.y - this.height / 2 - 10,
+    );
   }
 
   attack(monster) {

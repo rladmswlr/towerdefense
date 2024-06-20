@@ -96,8 +96,6 @@ export const refundTower = (userId, payload, socket) => {
   if (tower.position.x != payload.towerpos.x && tower.position.y != payload.towerpos.y) {
     return { status: 'fail', message: 'Position is Not Matching' };
   }
-
-
   
   const userGameState = getUserById(userId);
 
