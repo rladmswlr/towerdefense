@@ -32,6 +32,7 @@ let isDeath = false;
 
 let towerId = 0;
 let isrefund = false;
+let isupgrade = false;
 
 // 이미지 로딩 파트
 const backgroundImage = new Image();
@@ -180,8 +181,23 @@ function placeNewTower() {
 }
 
 function refundTower() {
+  if(isrefund){
+    isrefund = false;
+  }
+  else{
+    isrefund = true;
+    isupgrade = false;
+  }
+}
 
-  isrefund ? isrefund = false : isrefund = true;
+function updateTower() {
+  if(isupgrade){
+    isupgrade = false;
+  }
+  else{
+    isupgrade = true;
+    isrefund = false;
+  }
 }
 
 //타워 클릭 이벤트
@@ -202,9 +218,12 @@ canvas.addEventListener('click', (event) => {
     const deltaY = Math.abs(towerCenterY - clickY);
 
     if (deltaX <= towerRangeX && deltaY <= towerRangeY && isrefund) {
-      console.log(tower);
       sendEvent(8, {towerId : tower.towerId, towerpos: {x : tower.x , y : tower.y}});
       towers.splice(i, 1);
+    }
+
+    else if(deltaX <= towerRangeX && deltaY <= towerRangeY && isupgrade) {
+      sendEvent(9, {towerId : tower.towerId, towerpos: {x : tower.x , y : tower.y}, level:tower.level});
     }
   }
 });
@@ -237,7 +256,12 @@ function gameLoop() {
 
   if(isrefund){
     ctx.fillStyle = 'black';
-    ctx.fillText(`타워 환불 모드 ON`, 800, 150); // 최고 기록 표시
+    ctx.fillText(`타워 환불 모드 ON`, 800, 150);
+  }
+
+  if(isupgrade){
+    ctx.fillStyle = 'black';
+    ctx.fillText(`타워 강화 모드 ON`, 800, 150);
   }
 
   // 타워 그리기 및 몬스터 공격 처리
@@ -286,7 +310,7 @@ function initGame() {
   initMap(); // 맵 초기화 (배경, 몬스터 경로 그리기)
   placeInitialTowers(); // 설정된 초기 타워 개수만큼 사전에 타워 배치
   placeBase(); // 기지 배치
-  setInterval(spawnMonster, monsterSpawnInterval); // 설정된 몬스터 생성 주기마다 몬스0터 생성
+  setInterval(spawnMonster, monsterSpawnInterval); // 설정된 몬스터 생성 주기마다 몬스터 생성
   gameLoop(); // 게임 루프 최초 실행
   isInitGame = true;
 }
@@ -347,6 +371,13 @@ Promise.all([
         console.error(`동기화에 실패하였습니다. ${data.message}`);
       }
     },
+    9: (data) => {
+      if (data.status === 'success') {
+        updateTowerState(data.data)
+      } else {
+        console.error(`동기화에 실패하였습니다. ${data.message}`);
+      }
+    },
     // 계속 추가
   };
 
@@ -389,6 +420,14 @@ Promise.all([
     console.log('Received updateGameState:', syncData);
     updateGameState(syncData);
   });
+
+
+  serverSocket.on('updateTowerState', (syncData) => {
+    console.log('Received updateTowerState:', syncData);
+    updateTowerState(syncData);
+  });
+
+  serverSocket.on('')
 });
 
 const buyTowerButton = document.createElement('button');
@@ -418,6 +457,19 @@ refundTowerButton.addEventListener('click', refundTower);
 
 document.body.appendChild(refundTowerButton);
 
+const upgradeTowerButton = document.createElement('button');
+upgradeTowerButton.textContent = '타워 강화';
+upgradeTowerButton.style.position = 'absolute';
+upgradeTowerButton.style.top = '170px';
+upgradeTowerButton.style.right = '10px';
+upgradeTowerButton.style.padding = '10px 20px';
+upgradeTowerButton.style.fontSize = '16px';
+upgradeTowerButton.style.cursor = 'pointer';
+
+upgradeTowerButton.addEventListener('click', updateTower);
+
+document.body.appendChild(upgradeTowerButton);
+
 const sendEvent = (handlerId, payload) => {
   serverSocket.emit('event', {
     userId,
@@ -435,5 +487,12 @@ const updateGameState = (syncData) => {
   isDeath = syncData.isDeath !== undefined ? syncData.isDeath : isDeath;
   monsterLevel = syncData.monsterLevel !== undefined ? syncData.monsterLevel : monsterLevel;
 };
+
+const updateTowerState = (syncData) => {
+  const towerdata = towers.find((data) => data.towerId === syncData.towerId)
+  if(towerdata){
+      towerdata.level = syncData.towerLevel!== undefined ? syncData.towerLevel + 1 : 1;
+    }
+};  
 
 export { sendEvent };
