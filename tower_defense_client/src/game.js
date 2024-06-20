@@ -1,5 +1,6 @@
 import { Base } from './base.js';
 import { Monster } from './monster.js';
+import { GoldenMonster } from './GoldenMonster.js';
 import { Tower } from './tower.js';
 import { CLIENT_VERSION } from './Constants.js';
 
@@ -21,6 +22,7 @@ let baseHp = 0; // 기지 체력
 let towerCost = 500; // 타워 구입 비용
 let monsterLevel = 0; // 몬스터 레벨
 let monsterSpawnInterval = 1800; // 몬스터 생성 주기
+let goldenMonsterSpanwInterval = 1800;
 let numOfInitialTowers = 0;
 const monsters = [];
 const towers = [];
@@ -48,10 +50,12 @@ const pathImage = new Image();
 pathImage.src = 'images/path.png';
 
 const monsterImages = [];
+const goldenMonsterImages = [];
 for (let i = 1; i <= NUM_OF_MONSTERS; i++) {
   const img = new Image();
   img.src = `images/monster${i}.png`;
-  monsterImages.push(img);
+  if(i==5)goldenMonsterImages.push(img);
+  else monsterImages.push(img);
 }
 
 let monsterPath;
@@ -242,6 +246,11 @@ function spawnMonster() {
   monsters.push(new Monster(monsterPath, monsterImages, monsterLevel));
 }
 
+function spawnGoldenMonster() {
+  
+  monsters.push(new GoldenMonster(monsterPath, goldenMonsterImages, monsterLevel));
+}
+
 function gameLoop() {
   // 렌더링 시에는 항상 배경 이미지부터 그려야 합니다! 그래야 다른 이미지들이 배경 이미지 위에 그려져요!
   ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height); // 배경 이미지 다시 그리기
@@ -316,6 +325,7 @@ function initGame() {
   placeInitialTowers(); // 설정된 초기 타워 개수만큼 사전에 타워 배치
   placeBase(); // 기지 배치
   setInterval(spawnMonster, monsterSpawnInterval); // 설정된 몬스터 생성 주기마다 몬스터 생성
+  setInterval(spawnGoldenMonster, goldenMonsterSpanwInterval);
   gameLoop(); // 게임 루프 최초 실행
   isInitGame = true;
 }
