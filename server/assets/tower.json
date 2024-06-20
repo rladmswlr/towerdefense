@@ -2,12 +2,11 @@
   "name": "tower",
   "version": "1.0.0",
   "data": [
-    { "id":  100, "power": 0},
-    { "id":  101, "power": 40},
-    { "id":  102, "power": 60},
-    { "id":  103, "power": 80},
-    { "id":  104, "power": 100},
-    { "id":  105, "power": 120},
-    { "id":  106, "power": 150}
+    { "id":  100, "power": 40},
+    { "id":  101, "power": 60},
+    { "id":  102, "power": 80},
+    { "id":  103, "power": 100},
+    { "id":  104, "power": 120},
+    { "id":  105, "power": 150}
   ]
 }

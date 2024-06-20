@@ -24,7 +24,8 @@ export const removeMonster = (userId, socket, payload) => {
 };
 
 export const damageMonster = (userId, payload) => {
-  const { towerId, attackPower } = payload; // game.js 201번째 줄
+  const { towerId, attackPower } = payload; // game.js 215번째 줄
+  //console.log(towerId, attackPower);
 
   const towers = getTower(userId); // 임의로 작성
   const tower = towers.find((tower) => tower.id === towerId);

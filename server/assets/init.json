@@ -4,10 +4,11 @@
   "data": {
     "userGold": 1000,
     "baseHp": 200,
-    "towercost": 200,
+    "towerCost": 200,
     "numOfInitialTowers": 3,
-    "score": 0,
     "monsterLevel": 1,
-    "monsterSpawnInterval": 1800
+    "monsterSpawnInterval": 1800,
+    "score": 0,
+    "highScore": 0
   }
 }

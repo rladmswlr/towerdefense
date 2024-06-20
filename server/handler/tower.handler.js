@@ -8,7 +8,7 @@ const numOfInitialTowers = 3;
 export const initTower = (userId, payload) => {
 
     //타워의 갯수가 기존 Initial tower의 갯수보다 많은지 체크
-    if (numOfInitialTowers <= payload.towersnum ){
+    if (numOfInitialTowers < payload.towersnum ){
         return {status: 'fail', message: 'The initial number of towers was exceeded.'};
     }
 

@@ -20,7 +20,7 @@ let baseHp = 0; // 기지 체력
 
 let towerCost = 500; // 타워 구입 비용
 let monsterLevel = 0; // 몬스터 레벨
- let monsterSpawnInterval = 1800; // 몬스터 생성 주기
+let monsterSpawnInterval = 1800; // 몬스터 생성 주기
 let numOfInitialTowers = 0;
 const monsters = [];
 const towers = [];
@@ -214,7 +214,7 @@ function gameLoop() {
         tower.attack(monster);
         sendEvent(13, {
           towerId: tower.id,
-          attackPower: tower.attackPower,
+          attackPower: tower.attackPower
         });
       }
     });
@@ -230,7 +230,7 @@ function gameLoop() {
       if (isDestroyed) {
         /* 게임 오버 */
         alert('게임 오버. 스파르타 본부를 지키지 못했다...ㅠㅠ');
-        location.reload();
+        //location.reload();
       }
       monster.draw(ctx);
     } else {
@@ -305,9 +305,9 @@ Promise.all([
   const handlerMappings = {
     // 서버에서부터 받은 이벤트 코드
     1: (data) => {
-      if (data.status === 'success') {
-        console.log(data.data);
-        initializeGameState(data.data);
+      if (data.status === 'success') { 
+        console.log(data.data.data.data);
+        initializeGameState(data.data.data.data);
       } else {
         console.error(`초기화에 실패하였습니다. ${data.message}`);
       }
@@ -322,15 +322,18 @@ Promise.all([
     // 계속 추가
   };
 
-  serverSocket.on('response', (data) => {
+  serverSocket.on('response', async (data) => {
     // helper.js의 socket.emit('response', response);
+    const handler = await handlerMappings[data.handlerId];
     
-    const handler = handlerMappings[data.handlerId];
-    if (handler) {
-      handler(data);
-    } else {
+    // 배열에 저장한 함수를 실행하는 방법 탐색결과 : 찾았음
+    //handlerMappings[data.handlerId](data);
+
+    if (!handler) {
       console.log(data);
       console.error(`핸들러 ID를 찾을 수 없습니다. ${data.handlerId}`);
+    } else {
+      handler(data);
     }
   });
 
@@ -346,7 +349,8 @@ Promise.all([
     }
 
     // 초기 게임 데이터 요청
-    sendEvent(1, {payload:userId});
+    const res = sendEvent(1, {payload:userId});
+    console.log(res);
 
     if (!isInitGame) {
       initGame();
