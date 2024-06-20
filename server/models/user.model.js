@@ -6,7 +6,7 @@ export const addUser = (token, init, socket) => {
     token: token,
     userGold: init.data.userGold,
     baseHp: init.data.baseHp,
-    towerCost: init.data.towercost,
+    towerCost: init.data.towerCost,
     numOfInitialTowers: init.data.numOfInitialTowers,
     monsterLevel: init.data.monsterLevel,
     monsterSpawnInterval: init.data.monsterSpawnInterval,
