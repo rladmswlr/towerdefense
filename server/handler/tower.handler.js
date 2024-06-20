@@ -26,6 +26,8 @@ export const buyTower = (userId, payload, socket) => {
     return { status: 'fail', message: 'There is little gold.' };
   }
 
+  
+
   const serverTime = Date.now(); // 현재 타임스탬프
 
   const userGameState = getUserById(userId);
@@ -95,8 +97,6 @@ export const refundTower = (userId, payload, socket) => {
   if (tower.position.x != payload.towerpos.x && tower.position.y != payload.towerpos.y) {
     return { status: 'fail', message: 'Position is Not Matching' };
   }
-
-
   
   const userGameState = getUserById(userId);
 

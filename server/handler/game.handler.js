@@ -1,6 +1,7 @@
 import { clearMonster } from '../models/monster.model.js';
 import { clearTower } from '../models/tower.model.js';
 import { clearLevel, setLevel } from '../models/level.model.js';
+import { getUserById } from '../models/user.model.js';
 
 export const gameStart = (uuid, init) => {
   // clear level
@@ -14,7 +15,7 @@ export const gameEnd = (uuid, payload) => {
   const { game, monster } = getGameAssets();
 
   const user = getUserById(uuid);
-  const serverScore = 0;
+  const serverScore = user.score;
   //= 몬스터 처리 점수 합산
 
   let verification = false;
