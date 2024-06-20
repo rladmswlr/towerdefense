@@ -1,7 +1,10 @@
 import { clearMonster } from '../models/monster.model.js';
 import { clearTower } from '../models/tower.model.js';
 import { clearLevel, setLevel } from '../models/level.model.js';
-import { getUserById } from '../models/user.model.js';
+import { getHighScore, getHightScoreUsers, updateHighScore } from '../models/score.model.js'
+import {getUserById} from '../models/user.model.js'
+import jwt from 'jsonwebtoken';
+
 
 export const gameStart = (uuid, init) => {
   // clear level
@@ -10,27 +13,38 @@ export const gameStart = (uuid, init) => {
   clearMonster(uuid);
 };
 
-export const gameEnd = (uuid, payload) => {
-  const { score } = payload;
-  const { game, monster } = getGameAssets();
+export const gameEnd = async ( userId ,payload, socket) => {
+  try {
+    const { score } = payload.payload;
+    let serverScore = 0;
+    let verification = false;
 
-  const user = getUserById(uuid);
-  const serverScore = user.score;
-  //= 몬스터 처리 점수 합산
 
-  let verification = false;
+    const user = getUserById(userId)
 
-  if (serverScore == score) verification == true;
 
-  if (!verification) {
-    socket.emit('gameEnd', { status: 'fail', message: '게임 검증 실패' });
-    return;
+
+    if(user.score == score) verification = true;
+
+    if (!verification) {
+      socket.emit('gameEnd', { status: 'fail', message: '게임 검증 실패' });
+      return;
+    }
+  
+
+    const token = socket.handshake.query.token.split(' ');
+    let personalRecord = 0;
+    let fullRecord = 0;
+
+    const decodedToken = jwt.verify(token[1], process.env.CUSTOM_SECRET_KEY);
+    personalRecord = await getHighScore(decodedToken);
+    fullRecord = await getHightScoreUsers();
+    
+    if(personalRecord.highscore < score) updateHighScore(decodedToken,score);
+
+    socket.emit('gameEnd', { status: 'success', message: '게임종료', serverScore });
+  }catch(err){
+    console.error(err.message);
   }
-
-  const checkHighScore = 0; // 모든 유저 하이 스코어 체크
-  if (verification && serverScore > checkHighScore) {
-    io.emit('highscore', { highscore: serverScore });
-  }
-
-  socket.emit('gameEnd', { status: 'success', message: '게임종료', serverScore });
+  
 };
