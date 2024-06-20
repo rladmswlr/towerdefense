@@ -1,6 +1,6 @@
 import { Base } from './base.js';
 import { Monster } from './monster.js';
-import { GoldenMonster } from './GoldenMonster.js';
+import { GoldenMonster } from './goldenMonster.js';
 import { Tower } from './tower.js';
 import { CLIENT_VERSION } from './Constants.js';
 
@@ -13,7 +13,7 @@ let serverSocket; // 서버 웹소켓 객체
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
-const NUM_OF_MONSTERS = 5; // 몬스터 개수
+const NUM_OF_MONSTERS = 6; // 몬스터 개수
 
 let userGold = 0; // 유저 골드
 let base; // 기지 객체
@@ -50,11 +50,14 @@ const pathImage = new Image();
 pathImage.src = 'images/path.png';
 
 const monsterImages = [];
-const goldenMonsterImages = [];
+let goldenMonsterImages = null;
 for (let i = 1; i <= NUM_OF_MONSTERS; i++) {
   const img = new Image();
   img.src = `images/monster${i}.png`;
-  if(i==5)goldenMonsterImages.push(img);
+  if(i==6){
+    console.log("골든이미지 할당됨");
+    goldenMonsterImages=img;
+  }
   else monsterImages.push(img);
 }
 
@@ -243,13 +246,14 @@ function placeBase() {
 }
 
 function spawnMonster() {
-  monsters.push(new Monster(monsterPath, monsterImages, monsterLevel));
+  const nowRate = Math.floor(Math.random() * 100 + 1);
+  if(nowRate<=25){
+    monsters.push(new GoldenMonster(monsterPath, goldenMonsterImages, monsterLevel));
+  } else{
+    monsters.push(new Monster(monsterPath, monsterImages, monsterLevel));  
+  }
 }
 
-function spawnGoldenMonster() {
-  
-  monsters.push(new GoldenMonster(monsterPath, goldenMonsterImages, monsterLevel));
-}
 
 function gameLoop() {
   // 렌더링 시에는 항상 배경 이미지부터 그려야 합니다! 그래야 다른 이미지들이 배경 이미지 위에 그려져요!
@@ -324,8 +328,9 @@ function initGame() {
   initMap(); // 맵 초기화 (배경, 몬스터 경로 그리기)
   placeInitialTowers(); // 설정된 초기 타워 개수만큼 사전에 타워 배치
   placeBase(); // 기지 배치
+  
+  
   setInterval(spawnMonster, monsterSpawnInterval); // 설정된 몬스터 생성 주기마다 몬스터 생성
-  setInterval(spawnGoldenMonster, goldenMonsterSpanwInterval);
   gameLoop(); // 게임 루프 최초 실행
   isInitGame = true;
 }

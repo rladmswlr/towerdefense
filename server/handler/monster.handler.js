@@ -11,11 +11,17 @@ export const removeMonster = (userId, payload, socket) => {
 
   setDieMonster(userId, payload.monster);
 
+  
   // 현재 score에 +100을 추가
   const userGameState = getUserById(userId);
   console.log(userGameState);
+
   userGameState.score += 100;
 
+  if(payload.monster.isGolden){
+    userGameState.userGold += 500;
+  } 
+  
   if (userGameState.score % 2000 === 0) {
     userGameState.userGold += 1000;
     userGameState.monsterLevel += 1;
