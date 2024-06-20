@@ -2,12 +2,12 @@
   "name": "tower",
   "version": "1.0.0",
   "data": [
-    { "id":  100, "power": 40, "upgradeCost":50, "level" :1},
-    { "id":  101, "power": 50, "upgradeCost" : 100, "level" :2},
-    { "id":  102, "power": 60, "upgradeCost" : 150, "level" :3},
-    { "id":  103, "power": 70, "upgradeCost" : 200, "level" :4},
-    { "id":  104, "power": 80, "upgradeCost" : 250, "level" :5},
-    { "id":  105, "power": 90, "upgradeCost" : 300, "level" :6},
-    { "id":  106, "power": 100,"upgradeCost" : 350, "level" :7}
+    { "id":  100, "power": 40, "upgradeCost":50, "level" :1, "upgradeRate" : 100},
+    { "id":  101, "power": 50, "upgradeCost" : 100, "level" :2, "upgradeRate" : 90},
+    { "id":  102, "power": 60, "upgradeCost" : 150, "level" :3, "upgradeRate" : 80},
+    { "id":  103, "power": 70, "upgradeCost" : 200, "level" :4, "upgradeRate" : 70},
+    { "id":  104, "power": 80, "upgradeCost" : 250, "level" :5, "upgradeRate" : 60},
+    { "id":  105, "power": 90, "upgradeCost" : 300, "level" :6, "upgradeRate" : 50},
+    { "id":  106, "power": 100,"upgradeCost" : 350, "level" :7, "upgradeRate" : 40}
   ]
 }

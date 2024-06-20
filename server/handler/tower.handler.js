@@ -133,6 +133,7 @@ export const upgradeTower = (userId, payload, socket) => {
     return { status: 'fail', message: 'Position is Not Matching' };
   }
 
+  const updateRate = towerData.data.find((tower) => tower.level === payload.level);
   const updateCost = towerData.data.find((tower) => tower.level + 1 === payload.level + 1);
   
   if(!updateCost) {
@@ -142,7 +143,13 @@ export const upgradeTower = (userId, payload, socket) => {
   const userGameState = getUserById(userId);
 
   if(userGameState.userGold < updateCost.upgradeCost){
-    return {status: 'fail', message: `강화 골드가 ${updateCost.upgradeCost - userGameState.userGold}만큼 부족합니다.` }
+    return {status: 'fail', message: `강화 골드가 ${updateCost.upgradeCost - userGameState.userGold}만큼 부족합니다.` };
+  }
+
+  const nowRate = Math.floor(Math.random() * 100 + 1);
+
+  if(updateRate.upgradeRate <= nowRate){
+    return {status: 'fail', message: `강화가 실패하였습니다. 강화확률 : ${updateRate.upgradeRate}` };
   }
 
   userGameState.userGold -= updateCost.upgradeCost;
