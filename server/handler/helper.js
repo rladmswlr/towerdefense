@@ -11,10 +11,10 @@ export const handleDisconnect = (socket, uuid) => {
 export const handleConnection = async (socket, uuid) => {
   // 토큰 추출: WebSocket 쿼리 파라미터에서 토큰을 가져옵니다.
   const token = socket.handshake.query.token.split(' ');
-
   try {
     const decodedToken = jwt.verify(token[1], process.env.CUSTOM_SECRET_KEY);
-    const highScore = await getHighScore(uuid);
+    // console.log(`docodedToken Check, ${JSON.stringify(decodedToken)}, \n\n [token] ----- \n ${token}`);
+    const highScore = await getHighScore(decodedToken);
     socket.emit('connection', { uuid, highScore });
   } catch (error) {
     socket.emit('connection', { status: 'fail', message: 'Invalid or expired token' });
