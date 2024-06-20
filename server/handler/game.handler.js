@@ -1,6 +1,7 @@
 import { clearMonster } from '../models/monster.model.js';
 import { clearTower } from '../models/tower.model.js';
 import { clearLevel, setLevel } from '../models/level.model.js';
+import { getHighScore, getHightScoreUsers } from '../models/score.model.js'
 
 export const gameStart = (uuid, init) => {
   // clear level
@@ -26,7 +27,11 @@ export const gameEnd = (uuid, payload) => {
     return;
   }
 
-  const checkHighScore = 0; // 모든 유저 하이 스코어 체크
+  // const personalRecord = getHighScore();
+
+  const fullRecord = getHightScoreUsers(); // 모든 유저 하이 스코어 체크
+
+  
   if (verification && serverScore > checkHighScore) {
     io.emit('highscore', { highscore: serverScore });
   }

@@ -1,8 +1,6 @@
 import {prisma} from '../util/prisma/index.js'
-import jwt from 'jsonwebtoken';
 
 export const addHighScore = async (token, score) => {
-
   
   try{
     const isExistUser = await prisma.user.findFirst({
@@ -54,7 +52,7 @@ export const updateHighScore = async(token, score) =>{
   }
 }
 
-// 최고 점수 조회
+
 export const getHighScore = async (token) => {
   console.log("token 확인>>",token);
   try{
@@ -69,7 +67,7 @@ export const getHighScore = async (token) => {
 
     const target = await prisma.rank.findFirst({
       where:{
-        user_Id : decodedToken,
+        user_Id : token.userId,
       }
     })
 
@@ -78,3 +76,18 @@ export const getHighScore = async (token) => {
     console.error(err.message);
   }
 };
+
+// 최고 점수 조회
+export const getHightScoreUsers = async () =>{
+  try{
+    const scoreList = await prisma.rank.findMany({
+      orderBy:{
+        highscore : 'desc'
+      }
+    })
+
+    
+  } catch (err) {
+    console.error(err.message);
+  }
+}
