@@ -300,7 +300,6 @@ const initializeGameState = (initialGameData) => {
   monsterLevel = initialGameData.monsterLevel;
   monsterSpawnInterval = initialGameData.monsterSpawnInterval;
   score = initialGameData.score;
-  highScore = initialGameData.highScore;
 };
 
 // 이미지 로딩 완료 후 서버와 연결하고 게임 초기화
@@ -373,6 +372,9 @@ Promise.all([
       console.log(`클라이언트 정보가 확인되지 않았습니다. ${userId}`);
     }
     // 초기 게임 데이터 요청
+
+    highScore = data.highScore;
+
     sendEvent(1, { payload: userId });
 
     sleep(100).then(() => {
@@ -432,7 +434,6 @@ const updateGameState = (syncData) => {
   userGold = syncData.userGold !== undefined ? syncData.userGold : userGold;
   baseHp = syncData.baseHp !== undefined ? syncData.baseHp : baseHp;
   score = syncData.score !== undefined ? syncData.score : score;
-  highScore = syncData.highScore !== undefined ? syncData.highScore : highScore;
   isDeath = syncData.isDeath !== undefined ? syncData.isDeath : isDeath;
   monsterLevel = syncData.monsterLevel !== undefined ? syncData.monsterLevel : monsterLevel;
 };
