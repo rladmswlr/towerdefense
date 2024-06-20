@@ -32,6 +32,7 @@ let isDeath = false;
 
 let towerId = 0;
 let isrefund = false;
+let isupgrade = false;
 
 // 이미지 로딩 파트
 const backgroundImage = new Image();
@@ -54,6 +55,7 @@ for (let i = 1; i <= NUM_OF_MONSTERS; i++) {
 }
 
 let monsterPath;
+let lastX;
 
 function generateRandomMonsterPath() {
   const path = [];
@@ -62,30 +64,31 @@ function generateRandomMonsterPath() {
 
   path.push({ x: currentX, y: currentY });
 
-  while (currentX < canvas.width) {
+  while (currentX < canvas.width-120) {
     currentX += Math.floor(Math.random() * 100) + 50; // 50 ~ 150 범위의 x 증가
     // x 좌표에 대한 clamp 처리
-    if (currentX > canvas.width) {
-      currentX = canvas.width;
+    if (currentX > canvas.width-110) {
+      currentX = canvas.width-110;
     }
-
+    
     currentY += Math.floor(Math.random() * 200) - 100; // -100 ~ 100 범위의 y 변경
     // y 좌표에 대한 clamp 처리
-    if (currentY < 0) {
-      currentY = 0;
+    if (currentY < 220) {
+      currentY = 220;
     }
-    if (currentY > canvas.height) {
-      currentY = canvas.height;
+    if (currentY > canvas.height-80) {
+      currentY = canvas.height-80;
     }
 
     path.push({ x: currentX, y: currentY });
   }
+  const len = path.length;
 
   return path;
 }
 
 function initMap() {
-  ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height); // 배경 이미지 그리기
+  ctx.drawImage(backgroundImage, 0, 0, canvas.width-10, canvas.height-20); // 배경 이미지 그리기
   drawPath();
 }
 
@@ -100,6 +103,7 @@ function drawPath() {
     const startY = monsterPath[i].y;
     const endX = monsterPath[i + 1].x;
     const endY = monsterPath[i + 1].y;
+    
 
     const deltaX = endX - startX;
     const deltaY = endY - startY;
@@ -122,6 +126,7 @@ function drawRotatedImage(image, x, y, width, height, angle) {
   ctx.rotate(angle);
   ctx.drawImage(image, -width / 2, -height / 2, width, height);
   ctx.restore();
+  lastX = x + width + 60;   // 대략적인 길 끝지점
 }
 
 function getRandomPositionNearPath(maxDistance) {
@@ -135,13 +140,12 @@ function getRandomPositionNearPath(maxDistance) {
   const t = Math.random();
   const posX = startX + t * (endX - startX);
   const posY = startY + t * (endY - startY);
-
   const offsetX = (Math.random() - 0.5) * 2 * maxDistance;
   const offsetY = (Math.random() - 0.5) * 2 * maxDistance;
 
   return {
-    x: posX + offsetX,
-    y: posY + offsetY,
+    x: ((posX+offsetX)<=40) ? 40 : ((posX+offsetX)>=canvas.width-80) ? canvas.width-80 : posX+offsetX,
+    y: ((posY+offsetY)<=60) ? 60 : ((posY+offsetY)>=canvas.height-150) ? canvas.height-150 : posY+offsetY,
   };
 }
 
@@ -180,8 +184,23 @@ function placeNewTower() {
 }
 
 function refundTower() {
+  if(isrefund){
+    isrefund = false;
+  }
+  else{
+    isrefund = true;
+    isupgrade = false;
+  }
+}
 
-  isrefund ? isrefund = false : isrefund = true;
+function updateTower() {
+  if(isupgrade){
+    isupgrade = false;
+  }
+  else{
+    isupgrade = true;
+    isrefund = false;
+  }
 }
 
 //타워 클릭 이벤트
@@ -202,16 +221,20 @@ canvas.addEventListener('click', (event) => {
     const deltaY = Math.abs(towerCenterY - clickY);
 
     if (deltaX <= towerRangeX && deltaY <= towerRangeY && isrefund) {
-      console.log(tower);
       sendEvent(8, {towerId : tower.towerId, towerpos: {x : tower.x , y : tower.y}});
       towers.splice(i, 1);
+    }
+
+    else if(deltaX <= towerRangeX && deltaY <= towerRangeY && isupgrade) {
+      sendEvent(9, {towerId : tower.towerId, towerpos: {x : tower.x , y : tower.y}, level:tower.level});
     }
   }
 });
 
 function placeBase() {
   const lastPoint = monsterPath[monsterPath.length - 1];
-  base = new Base(lastPoint.x, lastPoint.y, baseHp);
+  if(lastX>=1920) lastX=1920;
+  base = new Base(lastX, lastPoint.y, baseHp);
   base.draw(ctx, baseImage);
 }
 
@@ -237,7 +260,12 @@ function gameLoop() {
 
   if(isrefund){
     ctx.fillStyle = 'black';
-    ctx.fillText(`타워 환불 모드 ON`, 800, 150); // 최고 기록 표시
+    ctx.fillText(`타워 환불 모드 ON`, 800, 150);
+  }
+
+  if(isupgrade){
+    ctx.fillStyle = 'black';
+    ctx.fillText(`타워 강화 모드 ON`, 800, 150);
   }
 
   // 타워 그리기 및 몬스터 공격 처리
@@ -287,7 +315,7 @@ function initGame() {
   initMap(); // 맵 초기화 (배경, 몬스터 경로 그리기)
   placeInitialTowers(); // 설정된 초기 타워 개수만큼 사전에 타워 배치
   placeBase(); // 기지 배치
-  setInterval(spawnMonster, monsterSpawnInterval); // 설정된 몬스터 생성 주기마다 몬스0터 생성
+  setInterval(spawnMonster, monsterSpawnInterval); // 설정된 몬스터 생성 주기마다 몬스터 생성
   gameLoop(); // 게임 루프 최초 실행
   isInitGame = true;
 }
@@ -348,10 +376,17 @@ Promise.all([
         console.error(`동기화에 실패하였습니다. ${data.message}`);
       }
     },
+    9: (data) => {
+      if (data.status === 'success') {
+        updateTowerState(data.data)
+      } else {
+        console.error(`동기화에 실패하였습니다. ${data.message}`);
+      }
+    },
     // 계속 추가
   };
 
-  serverSocket.on('response', (data) => {
+  serverSocket.on('response', async (data) => {
     // helper.js의 socket.emit('response', response);
 
     const handler = handlerMappings[data.handlerId];
@@ -390,6 +425,14 @@ Promise.all([
     console.log('Received updateGameState:', syncData);
     updateGameState(syncData);
   });
+
+
+  serverSocket.on('updateTowerState', (syncData) => {
+    console.log('Received updateTowerState:', syncData);
+    updateTowerState(syncData);
+  });
+
+  serverSocket.on('')
 });
 
 const buyTowerButton = document.createElement('button');
@@ -409,8 +452,8 @@ document.body.appendChild(buyTowerButton);
 const refundTowerButton = document.createElement('button');
 refundTowerButton.textContent = '타워 환불';
 refundTowerButton.style.position = 'absolute';
-refundTowerButton.style.top = '90px';
-refundTowerButton.style.right = '10px';
+refundTowerButton.style.top = '10px';
+refundTowerButton.style.right = '150px';
 refundTowerButton.style.padding = '10px 20px';
 refundTowerButton.style.fontSize = '16px';
 refundTowerButton.style.cursor = 'pointer';
@@ -418,6 +461,19 @@ refundTowerButton.style.cursor = 'pointer';
 refundTowerButton.addEventListener('click', refundTower);
 
 document.body.appendChild(refundTowerButton);
+
+const upgradeTowerButton = document.createElement('button');
+upgradeTowerButton.textContent = '타워 강화';
+upgradeTowerButton.style.position = 'absolute';
+upgradeTowerButton.style.top = '170px';
+upgradeTowerButton.style.right = '10px';
+upgradeTowerButton.style.padding = '10px 20px';
+upgradeTowerButton.style.fontSize = '16px';
+upgradeTowerButton.style.cursor = 'pointer';
+
+upgradeTowerButton.addEventListener('click', updateTower);
+
+document.body.appendChild(upgradeTowerButton);
 
 const sendEvent = (handlerId, payload) => {
   serverSocket.emit('event', {
@@ -436,5 +492,12 @@ const updateGameState = (syncData) => {
   isDeath = syncData.isDeath !== undefined ? syncData.isDeath : isDeath;
   monsterLevel = syncData.monsterLevel !== undefined ? syncData.monsterLevel : monsterLevel;
 };
+
+const updateTowerState = (syncData) => {
+  const towerdata = towers.find((data) => data.towerId === syncData.towerId)
+  if(towerdata){
+      towerdata.level = syncData.towerLevel!== undefined ? syncData.towerLevel + 1 : 1;
+    }
+};  
 
 export { sendEvent };

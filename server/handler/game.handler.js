@@ -5,6 +5,7 @@ import { getHighScore, getHightScoreUsers, updateHighScore } from '../models/sco
 import {getUserById} from '../models/user.model.js'
 import jwt from 'jsonwebtoken';
 
+
 export const gameStart = (uuid, init) => {
   // clear level
   clearLevel(uuid);
@@ -18,7 +19,9 @@ export const gameEnd = async ( userId ,payload, socket) => {
     let serverScore = 0;
     let verification = false;
 
+
     const user = getUserById(userId)
+
 
 
     if(user.score == score) verification = true;

@@ -32,7 +32,8 @@ export const removeMonster = (userId, payload, socket) => {
 };
 
 export const damageMonster = (userId, payload) => {
-  const { towerId, attackPower } = payload; // game.js 201번째 줄
+  const { towerId, attackPower } = payload; // game.js 215번째 줄
+  //console.log(towerId, attackPower);
 
   // console.log(towerId);
 
