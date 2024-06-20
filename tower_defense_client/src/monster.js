@@ -1,5 +1,15 @@
 import { sendEvent } from './game.js';
 
+const monsterdeadsound = new Audio('sound/monsterdead.mp3')
+
+function playSound(sound) {
+  sound.currentTime = 0
+  sound.play()
+}
+function stopSound(sound) {
+  sound.pause()
+}
+
 export class Monster {
   constructor(path, monsterImages, level) {
     // 생성자 안에서 몬스터의 속성을 정의한다고 생각하시면 됩니다!
@@ -53,6 +63,7 @@ export class Monster {
         attackPower: this.attackPower, // 몬스터 공격력
       });
       const isDestroyed = base.takeDamage(this.attackPower); // 기지에 도달하면 기지에 데미지를 입힙니다!
+      playSound(monsterdeadsound);
       this.hp = 0; // 몬스터는 이제 기지를 공격했으므로 자연스럽게 소멸해야 합니다.
       return isDestroyed;
     }

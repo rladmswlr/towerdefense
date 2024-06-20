@@ -1,5 +1,17 @@
 import { sendEvent } from './game.js';
 
+const goldmonstersound = new Audio('sound/goldmonster.mp3');
+const monsterdeadsound = new Audio('sound/monsterdead.mp3');
+const towerattacksound = new Audio('sound/towerattack.mp3');
+
+function playSound(sound) {
+  sound.currentTime = 0;
+  sound.play();
+}
+function stopSound(sound) {
+  sound.pause();
+}
+
 export class Tower {
   constructor(towerId, x, y, cost) {
     // 생성자 안에서 타워들의 속성을 정의한다고 생각하시면 됩니다!
@@ -53,10 +65,13 @@ export class Tower {
         towerId: this.towerId,
         attackPower: this.attackPower,
       });
+      playSound(towerattacksound);
+
       if (monster.hp <= 0) {
         sendEvent(12, {
           monster,
         });
+        playSound(monsterdeadsound);
       }
       this.cooldown = 180; // 3초 쿨타임 (초당 60프레임)
       this.beamDuration = 30; // 광선 지속 시간 (0.5초)
