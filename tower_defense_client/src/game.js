@@ -20,7 +20,7 @@ let baseHp = 0; // 기지 체력
 
 let towerCost = 500; // 타워 구입 비용
 let monsterLevel = 0; // 몬스터 레벨
- let monsterSpawnInterval = 1800; // 몬스터 생성 주기
+let monsterSpawnInterval = 1800; // 몬스터 생성 주기
 let numOfInitialTowers = 0;
 const monsters = [];
 const towers = [];
@@ -212,10 +212,6 @@ function gameLoop() {
       );
       if (distance < tower.range) {
         tower.attack(monster);
-        sendEvent(13, {
-          towerId: tower.id,
-          attackPower: tower.attackPower,
-        });
       }
     });
   });
@@ -236,9 +232,6 @@ function gameLoop() {
     } else {
       /* 몬스터가 죽었을 때 */
       monsters.splice(i, 1);
-      sendEvent(12, {
-        monster,
-      });
     }
   }
 
@@ -285,11 +278,11 @@ Promise.all([
   const token = localStorage.getItem('accessToken');
   serverSocket = io('http://localhost:8080', {
     query: {
-      token: token, 
-      clientVersion : CLIENT_VERSION,
+      token: token,
+      clientVersion: CLIENT_VERSION,
     },
     auth: {
-      token: token, 
+      token: token,
     },
   });
 
@@ -323,13 +316,12 @@ Promise.all([
 
   serverSocket.on('response', (data) => {
     // helper.js의 socket.emit('response', response);
-    
+
     const handler = handlerMappings[data.handlerId];
     if (handler) {
       handler(data);
     } else {
       console.log(data);
-      console.error(`핸들러 ID를 찾을 수 없습니다. ${data.handlerId}`);
     }
   });
 
@@ -344,20 +336,21 @@ Promise.all([
       console.log(`클라이언트 정보가 확인되지 않았습니다. ${userId}`);
     }
     // 초기 게임 데이터 요청
-    sendEvent(1, {payload:userId});
+    sendEvent(1, { payload: userId });
 
-    sleep(100).then(()=>{
+    sleep(100).then(() => {
       if (!isInitGame) {
         initGame();
-      } 
-    })
+      }
+    });
   });
 
-  function sleep(ms){
-    return new Promise(resolve => setTimeout(resolve, ms));
+  function sleep(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   serverSocket.on('updateGameState', (syncData) => {
+    console.log('Received updateGameState:', syncData);
     updateGameState(syncData);
   });
 });
@@ -383,8 +376,6 @@ const sendEvent = (handlerId, payload) => {
     payload,
   });
 };
-
-
 
 const updateGameState = (syncData) => {
   userGold = syncData.userGold !== undefined ? syncData.userGold : userGold;

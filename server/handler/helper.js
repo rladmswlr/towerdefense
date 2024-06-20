@@ -11,7 +11,7 @@ export const handleDisconnect = (socket, uuid) => {
 export const handleConnection = async (socket, uuid) => {
   // 토큰 추출: WebSocket 쿼리 파라미터에서 토큰을 가져옵니다.
   const token = socket.handshake.query.token.split(' ');
-  
+
   try {
     const decodedToken = jwt.verify(token[1], process.env.CUSTOM_SECRET_KEY);
     const highScore = await getHighScore(uuid);
@@ -29,12 +29,13 @@ export const handlerEvent = (socket, data, io) => {
   }
 
   const handler = handlerMappings[data.handlerId];
+  console.log('핸들러 확인:', data.handlerId);
   if (!handler) {
     socket.emit('response', { status: 'fail', message: 'Handler not found' });
     return;
   }
 
-  const response = handler(data.userId, socket ,data.payload, io);
+  const response = handler(data.userId, data.payload, socket, io);
 
   // 모든 유저에게 보내는 정보
   if (response.broadcast) {
@@ -44,4 +45,5 @@ export const handlerEvent = (socket, data, io) => {
 
   // 유저 한명에게만 보내는 정보
   socket.emit('response', response);
+  console.log('응답 전송:', response);
 };
