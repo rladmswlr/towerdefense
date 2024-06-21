@@ -13,7 +13,6 @@ export const handleConnection = async (socket, uuid) => {
   const token = socket.handshake.query.token.split(' ');
   try {
     const decodedToken = jwt.verify(token[1], process.env.CUSTOM_SECRET_KEY);
-    // console.log(`docodedToken Check, ${JSON.stringify(decodedToken)}, \n\n [token] ----- \n ${token}`);
     const highScoreList = await getHightScoreUsers(decodedToken);
     const highScore = highScoreList[0].highscore;
     socket.emit('connection', { uuid, highScore});
@@ -30,7 +29,6 @@ export const handlerEvent = (socket, data, io) => {
   }
 
   const handler = handlerMappings[data.handlerId];
-  console.log('핸들러 확인:', data.handlerId);
   if (!handler) {
     socket.emit('response', { status: 'fail', message: 'Handler not found' });
     return;
@@ -46,5 +44,4 @@ export const handlerEvent = (socket, data, io) => {
 
   // 유저 한명에게만 보내는 정보
   socket.emit('response', response);
-  console.log('응답 전송:', response);
 };

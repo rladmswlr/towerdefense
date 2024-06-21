@@ -55,7 +55,6 @@ for (let i = 1; i <= NUM_OF_MONSTERS; i++) {
   const img = new Image();
   img.src = `images/monster${i}.png`;
   if(i==6){
-    console.log("골든이미지 할당됨");
     goldenMonsterImages=img;
   }
   else monsterImages.push(img);
@@ -406,20 +405,16 @@ Promise.all([
     const handler = handlerMappings[data.handlerId];
     if (handler) {
       handler(data);
-    } else {
-      console.log(data);
-    }
+    } 
   });
 
   serverSocket.on('connection', async (data) => {
     const token = window.localStorage.getItem('accessToken');
     if (token) {
-      console.log(`클라이언트 정보가 확인됐습니다. ${token}`);
       userId = token;
     } else {
       userId = data.uuid;
       window.localStorage.setItem('accessToken', userId);
-      console.log(`클라이언트 정보가 확인되지 않았습니다. ${userId}`);
     }
     // 초기 게임 데이터 요청
 
@@ -439,13 +434,11 @@ Promise.all([
   }
 
   serverSocket.on('updateGameState', (syncData) => {
-    console.log('Received updateGameState:', syncData);
     updateGameState(syncData);
   });
 
 
   serverSocket.on('updateTowerState', (syncData) => {
-    console.log('Received updateTowerState:', syncData);
     updateTowerState(syncData);
   });
 

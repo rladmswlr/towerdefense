@@ -24,7 +24,6 @@ app.get('/', (req, res) => {
 });
 
 loadGameAssets();
-console.log('Assets loaded successfully');
 
 server.listen(PORT, async () => {
   console.log(`${PORT} Server가 열렸습니다`);
