@@ -31,21 +31,22 @@ router.post('/sign-up', async (req, res, next) => {
   });
 
   await prisma.rank.create({
-    data : {user_Id : registeredUser.user_Id, highscore : 0},
-  })
-  
+    data: { user_Id: registeredUser.user_Id, highscore: 0 },
+  });
 
   return res.status(201).json({ message: '회원가입이 완료되었습니다' });
 });
 
 router.post('/sign-in', async (req, res, next) => {
   const { id, password } = req.body;
+
   const user = await prisma.user.findFirst({ where: { id } });
   if (!user) {
     return res.status(401).json({ message: '존재하지 않는 아이디입니다' });
   } else if (!(await bcrypt.compare(password, user.password))) {
     return res.status(401).json({ message: '비밀번호가 일치하지 않습니다.' });
   }
+
   const token = jwt.sign(
     {
       userId: user.user_Id,

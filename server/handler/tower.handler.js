@@ -1,5 +1,5 @@
 import { getGameAssets } from '../init/assets.js'; // 임의로 작성
-import { getTower, setAttackTower, setRefundTower, setTower, setTowerUpgrade } from '../models/tower.model.js';
+import { getTower, setAttackTower, setRefundTower, setTower } from '../models/tower.model.js';
 import { getUserById } from '../models/user.model.js';
 
 // 타워 초기 세팅 값
@@ -16,7 +16,7 @@ export const initTower = (userId, payload) => {
   const serverTime = Date.now(); // 현재 타임스탬프
 
   //타워의 데이터 저장
-  setTower(userId, payload.towerId,1 ,payload.position, serverTime);
+  setTower(userId, payload.towerId, 1, payload.position, serverTime);
   return { status: 'success', message: '타워 배치 완료' };
 };
 
@@ -25,8 +25,6 @@ export const buyTower = (userId, payload, socket) => {
   if (payload.userGold < payload.towerCost) {
     return { status: 'fail', message: 'There is little gold.' };
   }
-
-  
 
   const serverTime = Date.now(); // 현재 타임스탬프
 
@@ -40,14 +38,12 @@ export const buyTower = (userId, payload, socket) => {
   });
 
   //타워의 데이터 저장
-  setTower(userId, payload.towerId, 1 ,payload.position, serverTime);
-  return { status: 'success' };
+  setTower(userId, payload.towerId, 1, payload.position, serverTime);
+
+  return { status: 'success', message: '타워 구매 완료' };
 };
 
 export const attackTower = (userId, payload) => {
-  //payload로 입력받는 정보
-  //타워 position , 몬스터 position, 타워의 사거리정보
-
   const towers = getTower(userId);
 
   //타워의 데이터 찾기 현재 때린 타워의 ID를 기반으로 저장된 타워를 찾는다.
@@ -79,25 +75,22 @@ export const attackTower = (userId, payload) => {
   return { status: 'success', message: 'towerattack' };
 };
 
-
 export const refundTower = (userId, payload, socket) => {
-
   const towers = getTower(userId);
 
   //타워의 데이터 찾기 현재 때린 타워의 ID를 기반으로 저장된 타워를 찾는다.
   const tower = towers.find((data) => data.id === payload.towerId);
 
-
   //해당 Id의 타워가 존재하는지 체크
   if (!tower) {
     return { status: 'fail', message: 'There is No Tower' };
   }
-  
+
   // 해당 위치의 타워가 존재하는지 체크
   if (tower.position.x != payload.towerpos.x && tower.position.y != payload.towerpos.y) {
     return { status: 'fail', message: 'Position is Not Matching' };
   }
-  
+
   const userGameState = getUserById(userId);
 
   userGameState.userGold += Math.floor(userGameState.towerCost * (1 / 2));
@@ -107,16 +100,14 @@ export const refundTower = (userId, payload, socket) => {
     userGold: userGameState.userGold,
   });
 
-
   const serverTime = Date.now(); // 현재 타임스탬프
 
   setRefundTower(userId, payload.towerId, serverTime);
 
-  return { status: 'success', message: 'towerRefund' };
-}
+  return { status: 'success', message: '타워 환불 완료' };
+};
 
 export const upgradeTower = (userId, payload, socket) => {
-
   const { towerData } = getGameAssets();
   const towers = getTower(userId);
 
@@ -127,7 +118,7 @@ export const upgradeTower = (userId, payload, socket) => {
   if (!tower) {
     return { status: 'fail', message: 'There is No Tower' };
   }
-  
+
   // 해당 위치의 타워가 존재하는지 체크
   if (tower.position.x != payload.towerpos.x && tower.position.y != payload.towerpos.y) {
     return { status: 'fail', message: 'Position is Not Matching' };
@@ -135,21 +126,27 @@ export const upgradeTower = (userId, payload, socket) => {
 
   const updateRate = towerData.data.find((tower) => tower.level === payload.level);
   const updateCost = towerData.data.find((tower) => tower.level + 1 === payload.level + 1);
-  
-  if(!updateCost) {
-    return {status: 'fail', message: '없는 강화 정보값입니다.' }
+
+  if (!updateCost) {
+    return { status: 'fail', message: '없는 강화 정보값입니다.' };
   }
 
   const userGameState = getUserById(userId);
 
-  if(userGameState.userGold < updateCost.upgradeCost){
-    return {status: 'fail', message: `강화 골드가 ${updateCost.upgradeCost - userGameState.userGold}만큼 부족합니다.` };
+  if (userGameState.userGold < updateCost.upgradeCost) {
+    return {
+      status: 'fail',
+      message: `강화 골드가 ${updateCost.upgradeCost - userGameState.userGold}만큼 부족합니다.`,
+    };
   }
 
   const nowRate = Math.floor(Math.random() * 100 + 1);
 
-  if(updateRate.upgradeRate <= nowRate){
-    return {status: 'fail', message: `강화가 실패하였습니다. 강화확률 : ${updateRate.upgradeRate}` };
+  if (updateRate.upgradeRate <= nowRate) {
+    return {
+      status: 'fail',
+      message: `강화가 실패하였습니다. 강화 확률 : ${updateRate.upgradeRate}`,
+    };
   }
 
   userGameState.userGold -= updateCost.upgradeCost;
@@ -160,11 +157,14 @@ export const upgradeTower = (userId, payload, socket) => {
   });
 
   socket.emit('updateTowerState', {
-    towerId : payload.towerId, 
-    towerLevel :nowlevel
+    towerId: payload.towerId,
+    towerLevel: nowlevel,
   });
 
   tower.level = tower.level + 1;
 
-  return { status: 'success', message: 'towerUpgrade' ,data: {towerId : payload.towerId , towerLevel :nowlevel}};
-}
+  return {
+    status: 'success',
+    message: '타워 강화 성공!',
+  };
+};

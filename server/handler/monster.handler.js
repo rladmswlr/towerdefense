@@ -4,24 +4,22 @@ import { getUserById } from '../models/user.model.js';
 import { getMonster, setMonster, setDieMonster } from '../models/monster.model.js';
 
 export const removeMonster = (userId, payload, socket) => {
-  // game.js 227번째 줄
   if (payload.hp > 0) {
     return { status: 'fail', message: '비정상적인 제거입니다.' };
   }
 
   setDieMonster(userId, payload.monster);
 
-  
   // 현재 score에 +100을 추가
   const userGameState = getUserById(userId);
   console.log(userGameState);
 
   userGameState.score += 100;
 
-  if(payload.monster.isGolden){
+  if (payload.monster.isGolden) {
     userGameState.userGold += 500;
-  } 
-  
+  }
+
   if (userGameState.score % 2000 === 0) {
     userGameState.userGold += 1000;
     userGameState.monsterLevel += 1;
@@ -31,29 +29,22 @@ export const removeMonster = (userId, payload, socket) => {
   socket.emit('updateGameState', {
     score: userGameState.score,
     userGold: userGameState.userGold,
-    monsterLevel: userGameState.monsterLevel
+    monsterLevel: userGameState.monsterLevel,
   });
 
-  return { status: 'success', message: '몬스터를 제거했습니다.' };
+  return { status: 'success', message: '몬스터를 >>제거<<했습니다.' };
 };
 
 export const damageMonster = (userId, payload) => {
-  const { towerId, attackPower } = payload; // game.js 215번째 줄
-  //console.log(towerId, attackPower);
+  const { towerId, attackPower } = payload;
 
-  // console.log(towerId);
-
-  // console.log(attackPower);
-
-  const towers = getTower(userId); // 임의로 작성
-  console.log(towers);
+  const towers = getTower(userId);
   const tower = towers.find((tower) => tower.id === towerId);
   if (!tower) {
     return { status: 'fail', message: '존재하지 않는 타워입니다.' };
   }
 
   if (attackPower !== 40) {
-    console.log('어택파워:', attackPower);
     return { status: 'fail', message: '타워의 공격력이 잘못되었습니다.' };
   }
 
@@ -61,9 +52,9 @@ export const damageMonster = (userId, payload) => {
 };
 
 export const monsterAttackBase = (userId, payload, socket) => {
-  const { levelsData } = getGameAssets(); // 임의로 작성
+  const { levelsData } = getGameAssets();
 
-  const { level, attackPower } = payload; // monster.js 46번째 줄
+  const { level, attackPower } = payload;
 
   setMonster(userId, level, attackPower);
 
@@ -85,7 +76,6 @@ export const monsterAttackBase = (userId, payload, socket) => {
   userGameState.baseHp -= attackPower;
   if (userGameState.baseHp < 0) userGameState.baseHp = 0; // 기지 HP가 음수가 되지 않도록 조정
 
-  // 업데이트된 게임 상태를 클라이언트에 전송
   socket.emit('updateGameState', {
     baseHp: userGameState.baseHp,
   });
