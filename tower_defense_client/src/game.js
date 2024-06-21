@@ -367,12 +367,10 @@ Promise.all([
   serverSocket.on('connection', async (data) => {
     const token = window.localStorage.getItem('accessToken');
     if (token) {
-      console.log(`클라이언트 정보가 확인됐습니다. ${token}`);
       userId = token;
     } else {
       userId = data.uuid;
       window.localStorage.setItem('accessToken', userId);
-      console.log(`클라이언트 정보가 확인되지 않았습니다. ${userId}`);
     }
 
     highScore = data.highScore;

@@ -7,13 +7,10 @@ export const removeMonster = (userId, payload, socket) => {
   if (payload.hp > 0) {
     return { status: 'fail', message: '비정상적인 제거입니다.' };
   }
-
   setDieMonster(userId, payload.monster);
 
   // 현재 score에 +100을 추가
   const userGameState = getUserById(userId);
-  console.log(userGameState);
-
   userGameState.score += 100;
 
   if (payload.monster.isGolden) {
@@ -24,7 +21,6 @@ export const removeMonster = (userId, payload, socket) => {
     userGameState.userGold += 1000;
     userGameState.monsterLevel += 1;
   }
-
   // 업데이트된 게임 상태를 클라이언트에 전송
   socket.emit('updateGameState', {
     score: userGameState.score,
@@ -43,11 +39,9 @@ export const damageMonster = (userId, payload) => {
   if (!tower) {
     return { status: 'fail', message: '존재하지 않는 타워입니다.' };
   }
-
   if (attackPower !== 40) {
     return { status: 'fail', message: '타워의 공격력이 잘못되었습니다.' };
   }
-
   return { status: 'success', message: '몬스터를 공격했습니다.' };
 };
 
@@ -61,7 +55,6 @@ export const monsterAttackBase = (userId, payload, socket) => {
   let currentLevels = getMonster(userId);
   currentLevels.sort((a, b) => a.level - b.level);
   const currentLevel = currentLevels[currentLevels.length - 1];
-
   const powerData = levelsData.data.find((level) => level.power === attackPower);
   if (!powerData) {
     return { status: 'fail', message: '존재하지 않는 파워입니다.' };

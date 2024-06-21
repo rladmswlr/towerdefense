@@ -12,9 +12,7 @@ export const initTower = (userId, payload) => {
   if (numOfInitialTowers < payload.towersnum) {
     return { status: 'fail', message: 'The initial number of towers was exceeded.' };
   }
-
   const serverTime = Date.now(); // 현재 타임스탬프
-
   //타워의 데이터 저장
   setTower(userId, payload.towerId, 1, payload.position, serverTime);
   return { status: 'success', message: '타워 배치 완료' };

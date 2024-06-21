@@ -10,8 +10,6 @@ const registerHandler = (io) => {
 
     addUser(token, init, socket.id);
     handleConnection(socket, token);
-
-    // 접속 해제시 이벤트
     socket.on('event', (data) => handlerEvent(socket, data, io));
     socket.on('disconnect', (socket) => handleDisconnect(socket, token));
   });
