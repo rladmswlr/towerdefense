@@ -247,7 +247,7 @@ function placeBase() {
 
 function spawnMonster() {
   const nowRate = Math.floor(Math.random() * 100 + 1);
-  if(nowRate<=25){
+  if(nowRate<=10){
     monsters.push(new GoldenMonster(monsterPath, goldenMonsterImages, monsterLevel));
   } else{
     monsters.push(new Monster(monsterPath, monsterImages, monsterLevel));  
