@@ -36,12 +36,6 @@ export const handlerEvent = (socket, data, io) => {
 
   const response = handler(data.userId, data.payload, socket, io);
 
-  // 모든 유저에게 보내는 정보
-  if (response.broadcast) {
-    io.emit('response', 'broadcast');
-    return;
-  }
-
   // 유저 한명에게만 보내는 정보
   socket.emit('response', response);
 };
