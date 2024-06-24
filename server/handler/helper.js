@@ -15,7 +15,7 @@ export const handleConnection = async (socket, uuid) => {
     const decodedToken = jwt.verify(token[1], process.env.CUSTOM_SECRET_KEY);
     const highScoreList = await getHightScoreUsers(decodedToken);
     const highScore = highScoreList[0].highscore;
-    socket.emit('connection', { uuid, highScore});
+    socket.emit('connection', { uuid, highScore });
   } catch (error) {
     socket.emit('connection', { status: 'fail', message: 'Invalid or expired token' });
     socket.disconnect(); // 토큰 검증 실패 시 연결 종료
@@ -35,12 +35,6 @@ export const handlerEvent = (socket, data, io) => {
   }
 
   const response = handler(data.userId, data.payload, socket, io);
-
-  // 모든 유저에게 보내는 정보
-  if (response.broadcast) {
-    io.emit('response', 'broadcast');
-    return;
-  }
 
   // 유저 한명에게만 보내는 정보
   socket.emit('response', response);
